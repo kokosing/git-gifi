@@ -20,7 +20,7 @@ requirements = [
 ]
 
 test_requirements = [
-    'nose==1.3.7',
+    'nose==1.3.4',
     'mock==1.0.1',
     'coverage==4.0a6'
 ]

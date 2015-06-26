@@ -6,7 +6,7 @@ python:
   - "3.3"
   - "3.4"
   - "nightly"
-# command to install dependencies
 install: "python setup.py install"
-# command to run tests
-script: "./devenv.sh build"
+script: 
+  - "python setup.py flake8"
+  - "python setup.py test"

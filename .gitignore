@@ -1,0 +1,5 @@
+# python
+virtual-env
+*.egg-info
+build
+dist

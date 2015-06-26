@@ -1,0 +1,56 @@
+#!/bin/bash -e
+
+cd $(dirname $(readlink -f $0))
+
+VIRTUAL_ENV=virtual-env/gifi/
+COMMANDS="help init install"
+
+function _err() {
+  echo $*
+  exit 1
+}
+
+function _activate_virtual_env() {
+  if [ -d $VIRTUAL_ENV ]; then
+    source $VIRTUAL_ENV/bin/activate
+  else
+    _err "Unable to find virtual env at $VIRTUAL_ENV"
+  fi
+}
+
+
+function init() {
+  sudo apt-get install python-dev 
+  virtualenv $VIRTUAL_ENV
+  source $VIRTUAL_ENV/bin/activate
+  _activate_virtual_env
+  python setup.py develop
+  echo 
+  echo "Remember to 'source $VIRTUAL_ENV/bin/activate', before coding"
+}
+
+function install() {
+  echo TODO
+}
+
+function help() {
+  cat << EOF
+$0 COMMAND [command arguments]
+
+Commands:
+  help  -   display this window
+  init  -   init sandbox (install virtual env and dependencies)
+  install -   install gifi to git as bunch of git aliases
+EOF
+}
+
+if [[ $# = 0 ]]; then
+  help
+  exit
+fi
+
+COMMAND=$1
+shift
+echo $COMMANDS | tr ' ' '\n' | grep -q "${COMMAND}" || _err "Invalid command: $COMMAND, try help command first."
+
+$COMMAND $*

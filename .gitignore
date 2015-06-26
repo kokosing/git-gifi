@@ -1,5 +1,10 @@
+# hidden files
+.*
+
 # python
+*.pyc
 virtual-env
+*.egg
 *.egg-info
 build
 dist

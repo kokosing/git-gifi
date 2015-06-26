@@ -3,7 +3,7 @@
 cd $(dirname $(readlink -f $0))
 
 VIRTUAL_ENV=virtual-env/gifi/
-COMMANDS="help init install"
+COMMANDS="help init install build"
 
 function _err() {
   echo $*
@@ -27,6 +27,13 @@ function init() {
   python setup.py develop
   echo 
   echo "Remember to 'source $VIRTUAL_ENV/bin/activate', before coding"
+}
+
+function build() {
+  _activate_virtual_env
+  python setup.py flake8
+  python setup.py test
+  python setup.py install
 }
 
 function install() {

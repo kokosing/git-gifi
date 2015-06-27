@@ -18,7 +18,7 @@ def test_run_command():
     assert callable.called == False
     command()
     assert callable.called == True
-    assert len(command.getNestedCommands()) == 0
+    assert len(command.nested_commands()) == 0
 
 
 def _test_callable(name):
@@ -39,6 +39,7 @@ def test_run_aggregated_command():
     assert callable2.called == False
     assert len(command.nested_commands()) == 2
 
+
 def test_run_aggregated_command_with_args():
     callable1, command1 = _test_callable('test1')
     callable2, command2 = _test_callable('test2')
@@ -50,6 +51,7 @@ def test_run_aggregated_command_with_args():
     assert callable1.args == ('some', 'arg')
     assert callable2.called == False
     assert len(command.nested_commands()) == 2
+
 
 @raises(UnknownCommandException)
 def test_run_aggregated_command_with_wrong_command():

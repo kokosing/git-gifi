@@ -1,19 +1,21 @@
-class Command:
+class Command(object):
     def __init__(self, name, description, callable):
         self.name = name
-        self.name
         self.description = description
         self.callable = callable
 
     def __call__(self, *args, **kwargs):
-        self.callable(*args, **kwargs)
+        return self.callable(*args, **kwargs)
 
-    def getNestedCommands(self):
+    def nested_commands(self):
         return []
 
+    def __str__(self):
+        return '%s\t-\t%s' % (self.name, self.description)
 
-class AggregatedCommand:
-    def __init__(self, name, description, commands):
+
+class AggregatedCommand(Command):
+    def __init__(self, name, description, commands=[]):
         self.name = name
         self.name
         self.description = description
@@ -27,10 +29,13 @@ class AggregatedCommand:
             raise UnknownCommandException("Command '%s' does not contain nested command '%s'" % (self.name, commandName))
         commandArgs = list(args)
         commandArgs.remove(commandName)
-        self.commands.get(commandName)(*commandArgs)
+        return self.commands.get(commandName)(*commandArgs)
+
+    def add_command(self, command):
+        self.commands[command.name] = command
 
     def nested_commands(self):
-        return self.commands
+        return self.commands.values()
 
 
 class UnknownCommandException(Exception):

@@ -2,6 +2,7 @@ import sys
 
 from command import Command, AggregatedCommand, UnknownCommandException, CommandException
 import feature
+import queue
 
 
 class HelpGenerator(object):
@@ -25,7 +26,8 @@ class HelpGenerator(object):
 
 
 command = AggregatedCommand('gifi', 'Git and github enhancements to git.', [
-    feature.command
+    feature.command,
+    queue.command
 ])
 _help = Command('help', 'display this window.', HelpGenerator(command))
 command.add_command(_help)

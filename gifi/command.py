@@ -1,8 +1,9 @@
 class Command(object):
-    def __init__(self, name, description, callable):
+    def __init__(self, name, description, callable, args=None):
         self.name = name
         self.description = description
         self.callable = callable
+        self.args = args
 
     def __call__(self, *args, **kwargs):
         return self.callable(*args, **kwargs)
@@ -11,14 +12,15 @@ class Command(object):
         return []
 
     def __str__(self):
-        return '%s\t-\t%s' % (self.name, self.description)
+        args = ''
+        if self.args is not None:
+            args = ' %s' % self.args
+        return '%s%s\t-\t%s' % (self.name, args, self.description)
 
 
 class AggregatedCommand(Command):
     def __init__(self, name, description, commands=[]):
-        self.name = name
-        self.name
-        self.description = description
+        super(AggregatedCommand, self).__init__(name, description, None)
         self.commands = dict(zip(map(lambda command: command.name, commands), commands))
 
     def __call__(self, *args, **kwargs):
@@ -26,7 +28,8 @@ class AggregatedCommand(Command):
             raise UnknownCommandException("No subcommand specified for command: '%s'" % self.name)
         commandName = args[0]
         if self.commands.get(commandName) is None:
-            raise UnknownCommandException("Command '%s' does not contain nested command '%s'" % (self.name, commandName))
+            raise UnknownCommandException(
+                "Command '%s' does not contain nested command '%s'" % (self.name, commandName))
         commandArgs = list(args)
         commandArgs.remove(commandName)
         return self.commands.get(commandName)(*commandArgs)
@@ -37,10 +40,21 @@ class AggregatedCommand(Command):
     def nested_commands(self):
         return self.commands.values()
 
+    def __str__(self):
+        subcommand = ''
+        if self.nested_commands() != 0:
+            subcommand = ' <subcommand>'
+        return '%s%s\t-\t%s' % (self.name, subcommand, self.description)
 
-class UnknownCommandException(Exception):
+
+class CommandException(Exception):
     def __init__(self, value):
         self.value = value
 
     def __str__(self):
         return repr(self.value)
+
+
+class UnknownCommandException(CommandException):
+    def __init__(self, value):
+        super(UnknownCommandException, self).__init__(value)

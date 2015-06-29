@@ -1,6 +1,7 @@
 import sys
 
-from command import Command, AggregatedCommand, UnknownCommandException
+from command import Command, AggregatedCommand, UnknownCommandException, CommandException
+import feature
 
 
 class HelpGenerator(object):
@@ -15,16 +16,18 @@ class HelpGenerator(object):
         for command in self.main.nested_commands():
             help += str(command)
             if len(command.nested_commands()) != 0:
-                help += 'Arguments:\n'
+                help += ' See below subcommands:\n'
                 for subcommand in command.nested_commands():
                     help += '\t%s\n' % str(subcommand)
-                help += '\n'
+            help += '\n'
 
         return help
 
 
-command = AggregatedCommand('gifi', 'Git and github enhancements to git.')
-_help = Command('help', 'display this window', HelpGenerator(command))
+command = AggregatedCommand('gifi', 'Git and github enhancements to git.', [
+    feature.command
+])
+_help = Command('help', 'display this window.', HelpGenerator(command))
 command.add_command(_help)
 
 
@@ -41,3 +44,5 @@ def _main(args):
         print command(*args)
     except UnknownCommandException:
         print "Wrong command, try 'help'."
+    except CommandException as e:
+        print "ERROR: %s" + str(e)

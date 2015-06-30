@@ -43,8 +43,10 @@ def _main(args):
     if len(args) == 0:
         args.append('help')
     try:
-        print command(*args)
+        result = command(*args)
+        if result is not None:
+            print result
     except UnknownCommandException:
         print "Wrong command, try 'help'."
     except CommandException as e:
-        print "ERROR: %s" + str(e)
+        print "ERROR: %s" % e

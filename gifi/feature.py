@@ -11,8 +11,10 @@ def _start(feature):
         raise CommandException('No feature name given')
 
     feature_branch = 'feature_%s' % feature
+    if repo.is_dirty():
+        raise CommandException('Please commit all untracked files before creating a feature branch')
 
-    if repo.heads[feature_branch] is not None:
+    if map(lambda head: head.name, repo.heads).count(feature_branch) != 0:
         raise CommandException("Feature branch '%s' already exists." % feature_branch)
 
     repo.git.fetch()

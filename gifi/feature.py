@@ -6,7 +6,7 @@ from command import AggregatedCommand, Command, CommandException
 repo = Repo('.')
 
 
-def _start_function(feature):
+def _start(feature):
     if feature is None:
         raise CommandException('No feature name given')
 
@@ -20,11 +20,11 @@ def _start_function(feature):
     repo.heads[feature_branch].checkout()
 
 
-def _finish_function():
-    pass
+def _finish():
+    raise CommandException("Not implemented yet")
 
 
 command = AggregatedCommand('feature', 'Manages a feature branches.', [
-    Command('start', 'Creates a new feature branch.', _start_function, '<feature name>'),
-    Command('finish', 'Closes and pushes a feature to a master branch.', _finish_function)
+    Command('start', 'Creates a new feature branch.', _start, '<feature name>'),
+    Command('finish', 'Closes and pushes a feature to a master branch.', _finish)
 ])

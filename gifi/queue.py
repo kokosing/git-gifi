@@ -1,6 +1,6 @@
 from git import Repo
 
-from command import Command, AggregatedCommand
+from command import Command, AggregatedCommand, CommandException
 
 repo = Repo('.')
 
@@ -13,14 +13,17 @@ def _current_branch():
     return repo.git.rev_parse('--abbrev-ref', 'HEAD')
 
 
-_pop = Command('pop', 'Pops a commit from the queue.', lambda: {
+def _pop():
     _check_repo_is_clean()
+    raise CommandException("Not implemented yet")
 
-})
 
-_push = Command('push', 'Pushes a commit on the queue.', lambda: {
+def _push():
     _check_repo_is_clean()
+    raise CommandException("Not implemented yet")
 
-})
 
-command = AggregatedCommand('queue', 'Stash based commit queue.', [_pop, _push])
+command = AggregatedCommand('queue', 'Stash based commit queue.', [
+    Command('pop', 'Pops a commit from the queue.', _pop),
+    Command('push', 'Pushes a commit on the queue.', _push)
+])

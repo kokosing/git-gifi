@@ -5,12 +5,14 @@ from command import AggregatedCommand, Command, CommandException
 
 repo = Repo('.')
 
+_FEATURE_BRANCH_PREFIX = 'feature_'
+
 
 def _start(feature):
     if feature is None:
         raise CommandException('No feature name given')
 
-    feature_branch = 'feature_%s' % feature
+    feature_branch = '%s%s' % (_FEATURE_BRANCH_PREFIX, feature)
     if repo.is_dirty():
         raise CommandException('Please commit all untracked files before creating a feature branch')
 
@@ -23,7 +25,17 @@ def _start(feature):
 
 
 def _finish():
-    raise CommandException("Not implemented yet")
+    current_branch = repo.git.rev_parse('--abbrev-ref', 'HEAD')
+    if current_branch.startswith(_FEATURE_BRANCH_PREFIX) == False:
+        raise CommandException('Please checkout to feature branch')
+    repo.git.fetch()
+    repo.git.rebase('-i', 'origin/master')
+    repo.git.push('-f', 'origin', 'HEAD:%s' % current_branch)
+    repo.git.push('origin', 'HEAD:master')
+    repo.git.checkout('master')
+    repo.git.rebase('origin/master')
+    repo.git.push('origin', ':%s' % current_branch)
+    repo.git.branch('-D', current_branch)
 
 
 command = AggregatedCommand('feature', 'Manages a feature branches.', [

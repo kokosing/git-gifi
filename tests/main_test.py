@@ -12,6 +12,7 @@ Usage:
 Commands:
 queue <subcommand>\t-\tStash based commit queue. See below subcommands:
 \tpush\t-\tPushes a commit on the queue.
+\tlist\t-\tList commits in the queue.
 \tpop\t-\tPops a commit from the queue.
 
 feature <subcommand>\t-\tManages a feature branches. See below subcommands:

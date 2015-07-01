@@ -1,4 +1,5 @@
 from git import Repo
+from internal import git_utils
 
 from command import AggregatedCommand, Command, CommandException
 
@@ -11,8 +12,7 @@ def _start(feature):
         raise CommandException('No feature name given')
 
     feature_branch = '%s%s' % (_FEATURE_BRANCH_PREFIX, feature)
-    if repo.is_dirty():
-        raise CommandException('Please commit all untracked files before creating a feature branch')
+    git_utils.check_repo_is_clean(repo)
 
     if map(lambda head: head.name, repo.heads).count(feature_branch) != 0:
         raise CommandException("Feature branch '%s' already exists." % feature_branch)
@@ -42,7 +42,7 @@ def _finish():
 
 
 def _current_feature_branch(repo):
-    current_branch = repo.git.rev_parse('--abbrev-ref', 'HEAD')
+    current_branch = git_utils.current_branch(repo)
     if not current_branch.startswith(_FEATURE_BRANCH_PREFIX):
         raise CommandException('Please checkout to feature branch')
     return current_branch

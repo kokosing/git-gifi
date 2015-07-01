@@ -2,7 +2,6 @@ from git import Repo
 
 from command import AggregatedCommand, Command, CommandException
 
-
 repo = Repo('.')
 
 _FEATURE_BRANCH_PREFIX = 'feature_'
@@ -24,10 +23,13 @@ def _start(feature):
     repo.heads[feature_branch].checkout()
 
 
+def _publish():
+    current_branch = _current_feature_branch()
+    repo.git.push('-u', 'origin', 'HEAD:%s' % current_branch)
+
+
 def _finish():
-    current_branch = repo.git.rev_parse('--abbrev-ref', 'HEAD')
-    if current_branch.startswith(_FEATURE_BRANCH_PREFIX) == False:
-        raise CommandException('Please checkout to feature branch')
+    current_branch = _current_feature_branch()
     repo.git.fetch()
     repo.git.rebase('-i', 'origin/master')
     repo.git.push('-f', 'origin', 'HEAD:%s' % current_branch)
@@ -38,7 +40,15 @@ def _finish():
     repo.git.branch('-D', current_branch)
 
 
+def _current_feature_branch():
+    current_branch = repo.git.rev_parse('--abbrev-ref', 'HEAD')
+    if not current_branch.startswith(_FEATURE_BRANCH_PREFIX):
+        raise CommandException('Please checkout to feature branch')
+    return current_branch
+
+
 command = AggregatedCommand('feature', 'Manages a feature branches.', [
     Command('start', 'Creates a new feature branch.', _start, '<feature name>'),
+    Command('publish', 'Publishes a feature branch to review.', _publish),
     Command('finish', 'Closes and pushes a feature to a master branch.', _finish)
 ])

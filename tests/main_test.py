@@ -17,6 +17,7 @@ queue <subcommand>\t-\tStash based commit queue. See below subcommands:
 feature <subcommand>\t-\tManages a feature branches. See below subcommands:
 \tstart <feature name>\t-\tCreates a new feature branch.
 \tfinish\t-\tCloses and pushes a feature to a master branch.
+\tpublish\t-\tPublishes a feature branch to review.
 
 help\t-\tdisplay this window.
 '''

@@ -13,6 +13,7 @@ class AbstractGitReposTest(TestCase):
         config_writer = self.remote_repo.config_writer()
         config_writer.set_value('receive', 'denyCurrentBranch', 'ignore')
         config_writer.set_value('receive', 'denyDeleteCurrent', 'ignore')
+        config_writer.release()
 
         self.local_repo = Repo.clone_from(self.remote_repo.working_tree_dir, mkdtemp())
         self.old_working_dir = os.getcwd()

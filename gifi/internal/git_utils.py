@@ -1,4 +1,5 @@
 from gifi.command import CommandException
+from git import Repo
 
 
 def current_branch(repo):
@@ -9,3 +10,9 @@ def current_branch(repo):
 def check_repo_is_clean(repo):
     if repo.is_dirty():
         raise CommandException('Please commit all untracked files.')
+
+
+def get_repo(repo=None):
+    if repo is None:
+        repo = Repo('.')
+    return repo

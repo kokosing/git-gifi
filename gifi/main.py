@@ -38,9 +38,9 @@ class AliasesInstaller(object):
     def __init__(self, main):
         self.main = main
 
-    def __call__(self):
+    def __call__(self, config_level='global'):
         repo = git_utils.get_repo()
-        config_writer = repo.config_writer()
+        config_writer = repo.config_writer(config_level)
         # it does not have to be recursive as there are only two levels
         for command in self.main.nested_commands():
             if len(command.nested_commands()) != 0:

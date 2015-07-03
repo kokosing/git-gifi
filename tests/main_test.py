@@ -43,7 +43,7 @@ def test_main_handles_no_command():
 
 class AliasesInstallerTest(AbstractGitReposTest):
     def test_aliases_installer(self):
-       command('install')
+       command('install', 'repository')
        config_reader = self.local_repo.config_reader()
        config_reader.get_value('alias', 'queue-push')
        config_reader.get_value('alias', 'queue-list')

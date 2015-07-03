@@ -1,7 +1,10 @@
 from difflib import unified_diff
+
 from pprint import pprint
+import subprocess
 
 from gifi.main import command, _main
+from internal.git_test import AbstractGitReposTest
 
 
 def test_help():
@@ -21,7 +24,8 @@ feature <subcommand>\t-\tManages a feature branches. See below subcommands:
 \tconfigure\t-\tConfigure feature behaviour.
 \tpublish\t-\tPublishes a feature branch to review.
 
-help\t-\tdisplay this window.
+install\t-\tInstall gifi as git bunch of aliases.
+help\t-\tDisplay this window.
 '''
     actual_help = command('help')
 
@@ -36,3 +40,19 @@ def test_main_handles_unknown_command():
 
 def test_main_handles_no_command():
     _main([])
+
+class AliasesInstallerTest(AbstractGitReposTest):
+    def test_aliases_installer(self):
+       command('install')
+       config_reader = self.local_repo.config_reader()
+       config_reader.get_value('alias', 'queue-push')
+       config_reader.get_value('alias', 'queue-list')
+       config_reader.get_value('alias', 'queue-pop')
+       config_reader.get_value('alias', 'feature-start')
+       config_reader.get_value('alias', 'feature-finish')
+       config_reader.get_value('alias', 'feature-publish')
+       config_reader.get_value('alias', 'feature-configure')
+       config_reader.release()
+
+       # call one alias
+       self.local_repo.git.__getattr__('queue-list')

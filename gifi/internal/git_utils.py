@@ -13,6 +13,10 @@ def check_repo_is_clean(repo):
 
 
 def get_repo(repo=None):
+    """
+
+    :rtype : git.Repo
+    """
     if repo is None:
         repo = Repo('.')
     return repo

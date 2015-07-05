@@ -22,7 +22,7 @@ Git and github enhancements to git.
 Concept of queue comes from [Mercurial Queues](http://hgbook.red-bean.com/read/managing-change-with-mercurial-queues.html). However this implementation is much simplier (git stash based). You can push (with **gifi push**) your commit on the queue (into git stash) and then pop (with **git pop**) it from the queue to your workspace.
 
 ###Feature
-Is a simpliified version of [gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow). It is well suited to the case where you and your team work always on the same branch called *master* (no *develop* branch). For each feature you create a *feature branch* wich then is merged into *master*. Releases are just tagged commits in *master*.
+It is a simpliified version of [gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow). It is well suited to the case where you and your team work always on the same branch called *master* (no *develop* branch). For each feature you create a *feature branch* wich then is merged into *master*. Releases are just tagged commits in *master*.
 
 	git feature-start new_feature
 	git add new_feature.code
@@ -31,6 +31,6 @@ Is a simpliified version of [gitflow](https://www.atlassian.com/git/tutorials/co
 	# after code review
 	git feature-finish
 
-In near future *git feature-publish* will create a pull request in github.
+In near future **git feature-publish** will create a pull request in github.
 
 

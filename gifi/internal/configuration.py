@@ -50,7 +50,7 @@ class Configuration(object):
             elif rawValue in ['False', 'false', 'no', '0']:
                 return False
             else:
-                raise CommandException("Wrong value '%s' (type: %s) for type '%s'" % (rawValue, type(rawValue), destType))
+                raise CommandException("Wrong value '%s' (with: %s) for '%s'" % (rawValue, type(rawValue), destType))
         elif destType is str:
             return rawValue
         else:
@@ -58,5 +58,7 @@ class Configuration(object):
 
     def configure(self):
         for key in self.list():
-            new_value = raw_input("%s (%s): " % (self.description(key), self[key]))
-            self.set(key, new_value)
+            current_value = self[key]
+            new_value = raw_input("%s (%s): " % (self.description(key), current_value))
+            if new_value is not '':
+                self.set(key, self._parse_value(new_value, type(current_value)))

@@ -7,6 +7,10 @@ Git and github enhancements to git.
 ***
 
 ##Installation
+
+Requires:
+-  git (tested with version 1.9.1)
+-  python 2.7
  
  	sudo apt-get install python-dev
 	git clone git@github.com:kokosing/git-gifi.git

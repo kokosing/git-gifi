@@ -15,6 +15,7 @@ Usage:
 Commands:
 queue <subcommand>\t-\tStash based commit queue. See below subcommands:
 \tpush\t-\tPushes a commit on the queue.
+\tpop-finish\t-\tIn case of conflict during 'pop', use this command once conflict is solved.
 \tlist\t-\tList commits in the queue.
 \tpop\t-\tPops a commit from the queue.
 

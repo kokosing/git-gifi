@@ -13,20 +13,20 @@ Usage:
 \tgifi command [command arguments]
 
 Commands:
-queue <subcommand>\t-\tStash based commit queue. See below subcommands:
-\tpush\t-\tPushes a commit on the queue.
-\tpop-finish\t-\tIn case of conflict during 'pop', use this command once conflict is solved.
-\tlist\t-\tList commits in the queue.
-\tpop\t-\tPops a commit from the queue.
-
 feature <subcommand>\t-\tManages a feature branches. See below subcommands:
+\tpublish\t-\tPublishes a feature branch to review.
 \tstart <feature name>\t-\tCreates a new feature branch.
 \tfinish\t-\tCloses and pushes a feature to a master branch.
 \tconfigure\t-\tConfigure feature behaviour.
-\tpublish\t-\tPublishes a feature branch to review.
 
-install\t-\tInstall gifi as git bunch of aliases.
+queue <subcommand>\t-\tStash based commit queue. See below subcommands:
+\tpop-finish\t-\tIn case of conflict during 'pop', use this command once conflict is solved.
+\tpop\t-\tPops a commit from the queue.
+\tpush\t-\tPushes a commit on the queue.
+\tlist\t-\tList commits in the queue.
+
 help\t-\tDisplay this window.
+install\t-\tInstall gifi as git bunch of aliases.
 '''
     actual_help = command('help')
 

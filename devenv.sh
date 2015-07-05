@@ -37,7 +37,9 @@ function build() {
 }
 
 function install() {
-  echo TODO
+  init
+  build
+  gifi install
 }
 
 function help() {

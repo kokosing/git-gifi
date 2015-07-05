@@ -38,7 +38,7 @@ class AggregatedCommand(Command):
         self.commands[command.name] = command
 
     def nested_commands(self):
-        return sorted(self.commands.values())
+        return self.commands.values()
 
     def __str__(self):
         subcommand = ''

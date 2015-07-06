@@ -48,7 +48,7 @@ class AliasesInstaller(object):
             if len(command.nested_commands()) != 0:
                 for subcommand in command.nested_commands():
                     alias = '%s-%s' % (command.name, subcommand.name)
-                    config_writer.set_value('alias', alias, '"!%s %s %s $*"' % (sys.argv[0], command.name, subcommand.name))
+                    config_writer.set_value('alias', alias, '"!%s %s %s"' % (sys.argv[0], command.name, subcommand.name))
         config_writer.release()
 
 

@@ -4,7 +4,8 @@ from internal import git_utils
 from internal.configuration import Configuration
 
 from command import AggregatedCommand, Command, CommandException
-from internal.git_utils import get_repo
+from internal.git_utils import get_repo, check_repo_is_clean
+from git_hub import get_github
 
 _FEATURE_BRANCH_PREFIX = 'feature_'
 
@@ -27,12 +28,29 @@ def _start(feature):
 
 def _publish():
     repo = get_repo()
+    check_repo_is_clean(repo)
     current_branch = _current_feature_branch(repo)
-    repo.git.push('-u', 'origin', 'HEAD:%s' % current_branch)
+    repo.git.push('-f', '-u', 'origin', 'HEAD:%s' % current_branch)
+    config = _configuration(repo)
+    if config.publish_with_pull_request:
+        config_reader = repo.config_reader()
+        origin_url = config_reader.get_value('remote "origin"', "url")
+        config_reader.release()
+        full_repo_name = origin_url.split(':')[1].split('.')[0]
+
+        pull = get_github(repo).get_repo(full_repo_name).create_pull(
+            title=repo.head.commit.summary,
+            body=repo.head.commit.message,
+            head=current_branch,
+            base='master'
+        )
+        repo.git.commit('--amend', '-m', '%s\n\nPull request: %s' % (repo.head.commit.message, pull.html_url))
+        return 'Pull request URL: %s' % pull.html_url
 
 
 def _finish():
     repo = get_repo()
+    check_repo_is_clean(repo)
     config = _configuration(repo)
     current_branch = _current_feature_branch(repo)
     repo.git.fetch()
@@ -55,7 +73,8 @@ def _configure():
 def _configuration(repo=None):
     repo = get_repo(repo)
     return Configuration(repo, 'feature', {
-        'finish-with-rebase-interactive': (False, 'Should do a rebase interactive during feature finishing')
+        'finish-with-rebase-interactive': (False, 'Should do a rebase interactive during feature finishing'),
+        'publish-with-pull-request': (False, 'Should create a pull request during feature publishing')
     })
 
 

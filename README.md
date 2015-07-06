@@ -37,6 +37,6 @@ It is a simpliified version of [gitflow](https://www.atlassian.com/git/tutorials
 	# after code review
 	git feature-finish
 
-In near future **git feature-publish** will create a pull request in github.
+In order to create a pull request during **git feature-publish**, please do **git feature-configure** first and enable pull request creation.
 
 

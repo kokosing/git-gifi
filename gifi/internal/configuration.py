@@ -56,8 +56,10 @@ class Configuration(object):
         else:
             raise CommandException('Unsupported type: %s' % destType)
 
-    def configure(self):
-        for key in self.list():
+    def configure(self, keys=None):
+        if keys is None:
+            keys = self.list()
+        for key in keys:
             current_value = self[key]
             new_value = raw_input("%s (%s): " % (self.description(key), current_value))
             if new_value is not '':

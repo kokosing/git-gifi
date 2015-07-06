@@ -19,6 +19,10 @@ queue <subcommand>\t-\tStash based commit queue. See below subcommands:
 \tlist\t-\tList commits in the queue.
 \tpop\t-\tPops a commit from the queue.
 
+github <subcommand>\t-\tIntegration with github. See below subcommands:
+\tauthenticate\t-\tCreates a new feature branch.
+\tconfigure\t-\tConfigure feature behaviour.
+
 feature <subcommand>\t-\tManages a feature branches. See below subcommands:
 \tstart <feature name>\t-\tCreates a new feature branch.
 \tfinish\t-\tCloses and pushes a feature to a master branch.

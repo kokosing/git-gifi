@@ -4,10 +4,12 @@ from internal import git_utils
 from command import Command, AggregatedCommand, UnknownCommandException, CommandException
 import feature
 import queue
+import git_hub
 
 command = AggregatedCommand('gifi', 'Git and github enhancements to git.', [
     feature.command,
-    queue.command
+    queue.command,
+    git_hub.command
 ])
 
 

@@ -11,6 +11,7 @@ Git and github enhancements to git.
 Requires:
 -  git (tested with version 1.9.1)
 -  python 2.7
+
  
  	sudo apt-get install python-dev
 	git clone git@github.com:kokosing/git-gifi.git
@@ -20,6 +21,7 @@ Requires:
 	python setup.py install
 	# if you prefer to gifi via set of git aliases, then
 	gifi install
+
 
 ##Usage
 ###Queue

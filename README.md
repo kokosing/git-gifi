@@ -37,6 +37,16 @@ It is a simpliified version of [gitflow](https://www.atlassian.com/git/tutorials
 	# after code review
 	git feature-finish
 
+###Github
+To use github integration you need to authenticate first (obtain access token):
+
+	git github-authenticate
+	
+Note that authentication information are stored per repository. Thanks to that it is possible to work with different github providers like github.com or github enterprise. However, if you have multiple repositories on the same github providers then you won't be able to authenticate git-gifi again, as it is already authenticated for different reposotiry but same github provider. In that case you need to go to your github profile settings, copy git-gifi access token and us it in below command:
+
+	git github-configure
+	
+##### Pull request
 In order to create a pull request during **git feature-publish**, please do **git feature-configure** first and enable pull request creation.
 
 

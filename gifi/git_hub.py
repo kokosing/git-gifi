@@ -25,9 +25,9 @@ def get_github(repo=None):
     config = _configuration(repo)
     if config.login is NOT_SET:
         raise missingConfigurationException('login')
-    if config.token is NOT_SET:
+    if config.access_token is NOT_SET:
         raise missingConfigurationException('access token')
-    return Github(config.token)
+    return Github(config.access_token)
 
 
 def missingConfigurationException(item):

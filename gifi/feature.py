@@ -4,7 +4,7 @@ from internal import git_utils
 from internal.configuration import Configuration
 
 from command import AggregatedCommand, Command, CommandException
-from internal.git_utils import get_repo, check_repo_is_clean
+from internal.git_utils import get_repo, check_repo_is_clean, remote_origin_url
 from git_hub import get_github
 
 _FEATURE_BRANCH_PREFIX = 'feature_'
@@ -33,9 +33,7 @@ def _publish():
     repo.git.push('-f', '-u', 'origin', 'HEAD:%s' % current_branch)
     config = _configuration(repo)
     if config.publish_with_pull_request:
-        config_reader = repo.config_reader()
-        origin_url = config_reader.get_value('remote "origin"', "url")
-        config_reader.release()
+        origin_url = remote_origin_url(repo)
         full_repo_name = origin_url.split(':')[1].split('.')[0]
 
         pull = get_github(repo).get_repo(full_repo_name).create_pull(

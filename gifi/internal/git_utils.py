@@ -20,3 +20,11 @@ def get_repo(repo=None):
     if repo is None:
         repo = Repo('.')
     return repo
+
+
+def remote_origin_url(repo=None):
+    repo = get_repo(repo)
+    config_reader = repo.config_reader()
+    origin_url = config_reader.get_value('remote "origin"', "url")
+    config_reader.release()
+    return origin_url

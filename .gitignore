@@ -8,3 +8,6 @@ virtual-env
 *.egg-info
 build
 dist
+
+# IDE
+*.iml

@@ -54,5 +54,5 @@ def _configuration(repo=None):
 
 command = AggregatedCommand('github', 'Integration with github.', [
     Command('authenticate', 'Creates a new feature branch.', _authenticate),
-    Command('configure', 'Configure feature behaviour.', _configure)
+    Command('configure', 'Configure github settings.', _configure)
 ])

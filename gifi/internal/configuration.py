@@ -1,6 +1,8 @@
-from gifi.command import CommandException
+from gifi.command import CommandException, Command
 
 _CONFIGURATION_PREFIX = 'gifi'
+
+NOT_SET = 'not-set'
 
 
 class Configuration(object):
@@ -34,8 +36,8 @@ class Configuration(object):
     def description(self, item):
         return self.configuration[item][1]
 
-    def set(self, item, value):
-        config_writer = self.repo.config_writer()
+    def set(self, item, value, config_level='repository'):
+        config_writer = self.repo.config_writer(config_level)
         config_writer.set_value(_CONFIGURATION_PREFIX, self._key(item), value)
         config_writer.release()
 
@@ -56,11 +58,12 @@ class Configuration(object):
         else:
             raise CommandException('Unsupported type: %s' % destType)
 
-    def configure(self, keys=None):
-        if keys is None:
-            keys = self.list()
-        for key in keys:
+    def configure(self, config_level='repository'):
+        for key in self.list():
             current_value = self[key]
             new_value = raw_input("%s (%s): " % (self.description(key), current_value))
             if new_value is not '':
-                self.set(key, self._parse_value(new_value, type(current_value)))
+                self.set(key, self._parse_value(new_value, type(current_value)), config_level)
+
+    def command(self, description):
+        return Command('configure', description, self.configure, '<configuration level>')

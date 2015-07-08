@@ -1,11 +1,10 @@
 import getpass
 
-from command import AggregatedCommand, Command, CommandException
 from github import Github
-from internal.configuration import Configuration
-from internal.git_utils import get_repo, remote_origin_url
 
-NOT_SET = 'not-set'
+from command import AggregatedCommand, Command, CommandException
+from internal.configuration import Configuration, NOT_SET
+from internal.git_utils import get_repo, remote_origin_url
 
 
 def _authenticate():
@@ -16,10 +15,6 @@ def _authenticate():
     gh = Github(config.login, pw, base_url=_get_github_url())
     authorization = gh.get_user().create_authorization(scopes=['repo'], note='git-gifi')
     config.set('access-token', authorization.token)
-
-
-def _configure():
-    _configuration().configure()
 
 
 def get_github(repo):
@@ -54,5 +49,5 @@ def _configuration(repo=None):
 
 command = AggregatedCommand('github', 'Integration with github.', [
     Command('authenticate', 'Creates a new feature branch.', _authenticate),
-    Command('configure', 'Configure github settings.', _configure)
+    _configuration().command('Configure github settings.')
 ])

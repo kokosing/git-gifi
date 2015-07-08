@@ -15,13 +15,13 @@ Usage:
 Commands:
 github <subcommand>\t-\tIntegration with github. See below subcommands:
 \tauthenticate\t-\tCreates a new feature branch.
-\tconfigure\t-\tConfigure github settings.
+\tconfigure <configuration level>\t-\tConfigure github settings.
 
 help\t-\tDisplay this window.
 feature <subcommand>\t-\tManages a feature branches. See below subcommands:
 \tstart <feature name>\t-\tCreates a new feature branch.
 \tfinish\t-\tCloses and pushes a feature to a master branch.
-\tconfigure\t-\tConfigure feature behaviour.
+\tconfigure <configuration level>\t-\tConfigure feature behaviour.
 \tpublish\t-\tPublishes a feature branch to review.
 
 queue <subcommand>\t-\tStash based commit queue. See below subcommands:
@@ -33,7 +33,7 @@ queue <subcommand>\t-\tStash based commit queue. See below subcommands:
 install\t-\tInstall gifi as git bunch of aliases.
 slack <subcommand>\t-\tIntegration with slack. See below subcommands:
 \tnotify <channel> <message>\t-\tPost a message on given channel.
-\tconfigure\t-\tConfigure feature settings.
+\tconfigure <configuration level>\t-\tConfigure slack settings.
 
 '''
     actual_help = command('help')

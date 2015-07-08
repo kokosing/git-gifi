@@ -1,8 +1,7 @@
 from git import Repo
 
 from internal import git_utils
-from internal.configuration import Configuration
-
+from internal.configuration import Configuration, NOT_SET
 from command import AggregatedCommand, Command, CommandException
 from internal.git_utils import get_repo, check_repo_is_clean, remote_origin_url
 from git_hub import get_github
@@ -11,7 +10,6 @@ import slack
 _FEATURE_BRANCH_PREFIX = 'feature_'
 _PULL_REQUEST_COMMIT_TAG = 'Pull request: '
 _SLACK_MESSAGE_SUFFIX = '(sent via git-gifi)'
-NOT_SET = 'not-set'
 
 
 def _start(feature):
@@ -46,12 +44,15 @@ def _publish():
             head=current_branch,
             base='master'
         )
-        repo.git.commit('--amend', '-m', '%s\n\n%s %s' % (repo.head.commit.message, _PULL_REQUEST_COMMIT_TAG, pull.html_url))
+        repo.git.commit('--amend', '-m',
+                        '%s\n\n%s %s' % (repo.head.commit.message, _PULL_REQUEST_COMMIT_TAG, pull.html_url))
         print 'Pull request URL: %s' % pull.html_url
 
-        if config.slack_pr_notification_channel is not NOT_SET:
+        channel = config.slack_pr_notification_channel
+        if channel is not NOT_SET:
             reviewers = _get_from_last_commit_message(repo, 'Reviewers:')
-            slack.notify(config.slack_pr_notification_channel, '%s Please review: %s %s' % (', '.join(map(lambda r: '@%s' % r, reviewers)), pull.html_url, _SLACK_MESSAGE_SUFFIX))
+            message = '%s Please review: %s %s' % (', '.join(map(lambda r: '@%s' % r, reviewers)), pull.html_url, _SLACK_MESSAGE_SUFFIX)
+            slack.notify(channel, message)
 
 
 def _get_from_last_commit_message(repo, item_header):
@@ -81,11 +82,8 @@ def _finish():
     if config.slack_pr_notification_channel is not NOT_SET:
         pull_requests = _get_from_last_commit_message(repo, _PULL_REQUEST_COMMIT_TAG)
         if len(pull_requests) > 0:
-            slack.notify(config.slack_pr_notification_channel, '%s merged %s' % (', '.join(pull_requests), _SLACK_MESSAGE_SUFFIX))
-
-
-def _configure():
-    _configuration().configure()
+            slack.notify(config.slack_pr_notification_channel,
+                         '%s merged %s' % (', '.join(pull_requests), _SLACK_MESSAGE_SUFFIX))
 
 
 def _configuration(repo=None):
@@ -108,5 +106,5 @@ command = AggregatedCommand('feature', 'Manages a feature branches.', [
     Command('start', 'Creates a new feature branch.', _start, '<feature name>'),
     Command('publish', 'Publishes a feature branch to review.', _publish),
     Command('finish', 'Closes and pushes a feature to a master branch.', _finish),
-    Command('configure', 'Configure feature behaviour.', _configure)
+    _configuration().command('Configure feature behaviour.')
 ])

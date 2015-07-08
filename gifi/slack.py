@@ -1,15 +1,8 @@
 from slackclient import SlackClient
 
 from command import AggregatedCommand, Command, CommandException
-from internal.configuration import Configuration
+from internal.configuration import Configuration, NOT_SET
 from internal.git_utils import get_repo
-
-
-NOT_SET = 'not-set'
-
-
-def _configure():
-    _configuration().configure()
 
 
 def _configuration(repo=None):
@@ -33,5 +26,5 @@ def missingConfigurationException(item):
 
 command = AggregatedCommand('slack', 'Integration with slack.', [
     Command('notify', 'Post a message on given channel.', notify, '<channel> <message>'),
-    Command('configure', 'Configure feature settings.', _configure)
+    _configuration().command('Configure slack settings.')
 ])

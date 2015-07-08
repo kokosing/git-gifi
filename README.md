@@ -55,7 +55,7 @@ To use github integration you need to authenticate first obtain an access token 
 	git slack-configure
 	
 	
-##### Notify pull request changes
+##### Notify about pull request changes
 If you want to send a notifaction to slack channel about pull request changes you need to enable it by specifying the channel to which you wan to send messages with
 
 	git feature-configure

@@ -50,16 +50,16 @@ def _publish():
         print 'Pull request URL: %s' % pull.html_url
 
         if config.slack_pr_notification_channel is not NOT_SET:
-            reviewers = get_from_last_commit_message(repo, 'Reviewers:')
+            reviewers = _get_from_last_commit_message(repo, 'Reviewers:')
             slack.notify(config.slack_pr_notification_channel, '%s Please review: %s %s' % (', '.join(map(lambda r: '@%s' % r, reviewers)), pull.html_url, _SLACK_MESSAGE_SUFFIX))
 
 
-def get_from_last_commit_message(repo, item_header):
+def _get_from_last_commit_message(repo, item_header):
     commit_message_lines = repo.head.commit.message.split('\n')
-    reviewers_lines = [e for e in commit_message_lines if e.startswith(item_header)]
-    reviewers = map(lambda e: e.split(':')[1].split(','), reviewers_lines)
-    reviewers = [item.strip() for sub_list in reviewers for item in sub_list]
-    return reviewers
+    lines_with_item = [e for e in commit_message_lines if e.startswith(item_header)]
+    items = map(lambda e: e.split('%s:' % item_header)[1].split(','), lines_with_item)
+    items = [item.strip() for sub_list in items for item in sub_list]
+    return items
 
 
 def _finish():
@@ -79,7 +79,7 @@ def _finish():
     repo.git.push('origin', ':%s' % current_branch)
     repo.git.branch('-D', current_branch)
     if config.slack_pr_notification_channel is not NOT_SET:
-        pull_requests = get_from_last_commit_message(repo, _PULL_REQUEST_COMMIT_TAG)
+        pull_requests = _get_from_last_commit_message(repo, _PULL_REQUEST_COMMIT_TAG)
         if len(pull_requests) > 0:
             slack.notify(config.slack_pr_notification_channel, '%s merged %s' % (', '.join(pull_requests), _SLACK_MESSAGE_SUFFIX))
 

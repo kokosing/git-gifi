@@ -14,7 +14,7 @@ def _pop():
 def _pop_finish(repo=None):
     repo = get_repo(repo)
     commit_message = repo.git.stash('list', '--max-count=1', '--oneline')
-    commit_message = ''.join(commit_message.split(': ')[2:])
+    commit_message = ': '.join(commit_message.split(': ')[2:])
     repo.index.commit(_unescape_new_lines(commit_message))
     repo.git.stash('drop')
 

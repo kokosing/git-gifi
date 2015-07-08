@@ -15,12 +15,11 @@ def _configure():
 def _configuration(repo=None):
     repo = get_repo(repo)
     return Configuration(repo, 'slack', {
-        'access-token': (NOT_SET, 'Slack access token'),
-        'user': (NOT_SET, 'Slack user')
+        'access-token': (NOT_SET, 'Slack access token')
     })
 
 
-def _notify(channel, message):
+def notify(channel, message):
     config = _configuration()
     if config.access_token is NOT_SET:
         raise missingConfigurationException('access-token')
@@ -33,6 +32,6 @@ def missingConfigurationException(item):
 
 
 command = AggregatedCommand('slack', 'Integration with slack.', [
-    Command('notify', 'Post a message on given channel.', _notify, '<channel> <message>'),
+    Command('notify', 'Post a message on given channel.', notify, '<channel> <message>'),
     Command('configure', 'Configure feature settings.', _configure)
 ])

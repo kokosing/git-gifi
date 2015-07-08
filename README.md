@@ -38,7 +38,7 @@ It is a simpliified version of [gitflow](https://www.atlassian.com/git/tutorials
 	git feature-finish
 
 ###Github
-To use github integration you need to authenticate first (obtain access token):
+To use github integration you need to authenticate first (obtain an access token):
 
 	git github-authenticate
 	
@@ -48,5 +48,20 @@ Note that authentication information are stored per repository. Thanks to that i
 	
 ##### Pull request
 In order to create a pull request during **git feature-publish**, please do **git feature-configure** first and enable pull request creation.
+
+###Slack
+To use github integration you need to authenticate first obtain an access token for slack web api and the pass it to:
+
+	git slack-configure
+	
+	
+##### Notify pull request changes
+If you want to send a notifaction to slack channel about pull request changes you need to enable it by specifying the channel to which you wan to send messages with
+
+	git feature-configure
+	
+Additinally, if you want to send notification to particular people on slack like: mike and john, then add below line to your last commit message in pull request:
+
+	Reviewers: mike, john
 
 

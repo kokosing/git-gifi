@@ -13,24 +13,28 @@ Usage:
 \tgifi command [command arguments]
 
 Commands:
-queue <subcommand>\t-\tStash based commit queue. See below subcommands:
-\tpush\t-\tPushes a commit on the queue.
-\tpop-finish\t-\tIn case of conflict during 'pop', use this command once conflict is solved.
-\tlist\t-\tList commits in the queue.
-\tpop\t-\tPops a commit from the queue.
-
 github <subcommand>\t-\tIntegration with github. See below subcommands:
 \tauthenticate\t-\tCreates a new feature branch.
-\tconfigure\t-\tConfigure feature behaviour.
+\tconfigure\t-\tConfigure github settings.
 
+help\t-\tDisplay this window.
 feature <subcommand>\t-\tManages a feature branches. See below subcommands:
 \tstart <feature name>\t-\tCreates a new feature branch.
 \tfinish\t-\tCloses and pushes a feature to a master branch.
 \tconfigure\t-\tConfigure feature behaviour.
 \tpublish\t-\tPublishes a feature branch to review.
 
+queue <subcommand>\t-\tStash based commit queue. See below subcommands:
+\tpush\t-\tPushes a commit on the queue.
+\tpop-finish\t-\tIn case of conflict during 'pop', use this command once conflict is solved.
+\tlist\t-\tList commits in the queue.
+\tpop\t-\tPops a commit from the queue.
+
 install\t-\tInstall gifi as git bunch of aliases.
-help\t-\tDisplay this window.
+slack <subcommand>\t-\tIntegration with slack. See below subcommands:
+\tnotify <channel> <message>\t-\tPost a message on given channel.
+\tconfigure\t-\tConfigure feature settings.
+
 '''
     actual_help = command('help')
 

@@ -12,14 +12,9 @@ Git and github enhancements to git.
 
 ##Installation
 
-In order to install git-gifi please do the following:
+In order to install git-gifi please do the following (usage of virutalevn is recommend):
 
-	sudo apt-get install python-dev
-	git clone git@github.com:kokosing/git-gifi.git
-	cd git-gifi
-	virtualenv virtual-env
-	source virtual-env/bin/activate
-	python setup.py install
+	pip install git-gifi
 	# if you prefer to gifi via set of git aliases, then
 	gifi install
 

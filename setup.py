@@ -37,10 +37,12 @@ setup_requirements = [
 ]
 
 setup(
-    name='git-gifii',
+    name='git-gifi',
+    version='0.1',
     description='Git and github enhancements to git.',
     author='Grzegorz Kokosinski',
     author_email='g.kokosinski a) gmail.com',
+    keywords='git github pull request slack',
     packages=find_packages(exclude=['*tests*']),
     package_dir={'gifi': 'gifi'},
     test_suite='test',

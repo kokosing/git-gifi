@@ -3,7 +3,7 @@ import getpass
 from github import Github
 
 from command import AggregatedCommand, Command, CommandException
-from internal.configuration import Configuration, NOT_SET
+from internal.configuration import Configuration, NOT_SET, configuration_command
 from internal.git_utils import get_repo, remote_origin_url
 
 
@@ -49,5 +49,5 @@ def _configuration(repo=None):
 
 command = AggregatedCommand('github', 'Integration with github.', [
     Command('authenticate', 'Creates a new feature branch.', _authenticate),
-    _configuration().command('Configure github settings.')
+    configuration_command(_configuration, 'Configure github settings.')
 ])

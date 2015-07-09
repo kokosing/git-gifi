@@ -1,7 +1,7 @@
 from git import Repo
 
 from internal import git_utils
-from internal.configuration import Configuration, NOT_SET
+from internal.configuration import Configuration, NOT_SET, configuration_command
 from command import AggregatedCommand, Command, CommandException
 from internal.git_utils import get_repo, check_repo_is_clean, remote_origin_url
 from git_hub import get_github
@@ -106,5 +106,5 @@ command = AggregatedCommand('feature', 'Manages a feature branches.', [
     Command('start', 'Creates a new feature branch.', _start, '<feature name>'),
     Command('publish', 'Publishes a feature branch to review.', _publish),
     Command('finish', 'Closes and pushes a feature to a master branch.', _finish),
-    _configuration().command('Configure feature behaviour.')
+    configuration_command(_configuration, 'Configure feature behaviour.')
 ])

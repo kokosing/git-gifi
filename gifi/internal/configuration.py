@@ -65,5 +65,6 @@ class Configuration(object):
             if new_value is not '':
                 self.set(key, self._parse_value(new_value, type(current_value)), config_level)
 
-    def command(self, description):
-        return Command('configure', description, self.configure, '<configuration level>')
+
+def configuration_command(configuration, description):
+    return Command('configure', description, lambda config_level: configuration().configure(config_level), '<configuration level>')

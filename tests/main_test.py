@@ -2,9 +2,12 @@ from difflib import unified_diff
 
 from pprint import pprint
 import subprocess
+from tempfile import mkdtemp
+from unittest import TestCase
 
 from gifi.main import command, _main
 from internal.git_test import AbstractGitReposTest
+import os
 
 
 def test_help():
@@ -66,3 +69,14 @@ class AliasesInstallerTest(AbstractGitReposTest):
 
        # call one alias
        self.local_repo.git.__getattr__('queue-list')
+
+class GifiWorksOutsideOfGit(TestCase):
+    def setUp(self):
+        self.old_working_dir = os.getcwd()
+        os.chdir(mkdtemp())
+
+    def tearDown(self):
+        os.chdir(self.old_working_dir)
+
+    def test_version(self):
+        _main(['version'])

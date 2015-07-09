@@ -26,6 +26,8 @@ function init() {
   source $VIRTUAL_ENV/bin/activate
   _activate_virtual_env
   $SETUP develop
+  pip install wheel
+  pip install twine
   echo 
   echo "Remember to 'source $VIRTUAL_ENV/bin/activate', before coding"
 }
@@ -38,19 +40,28 @@ function build() {
 }
 
 function install() {
-  init
   build
   gifi install
 }
 
 function release() {
+  VERSION=$(cat setup.py  | grep version | sed 's/.*0\.\(.*\)-.*/\1/g')
+  _change_version 0.$VERSION
   rm -rf dist
   build
   $SETUP register
   $SETUP bdist_wheel
   $SETUP bdist_wheel --universal
   $SETUP sdist
-  twine dist/*
+  twine upload dist/*
+  NEXT_VERSION=$(echo $VERSION + 1 | bc)
+  _change_version 0.$NEXT_VERSION-SNAPSHOT
+  git commit -a -m "Relase 0.$VERSION"
+}
+
+function _change_version() {
+  sed 's/\(.*version=.\).*\(.,.*\)/\1'$1'\2/g' setup.py > tmp
+  mv tmp setup.py
 }
 
 function help() {

@@ -3,6 +3,7 @@ import sys
 from internal import git_utils
 from command import Command, AggregatedCommand, UnknownCommandException, CommandException
 import feature
+import pkg_resources
 import queue
 import git_hub
 import slack
@@ -11,7 +12,8 @@ command = AggregatedCommand('gifi', 'Git and github enhancements to git.', [
     feature.command,
     queue.command,
     git_hub.command,
-    slack.command
+    slack.command,
+    Command('version', 'Show version number.', lambda: pkg_resources.require("git-gifi")[0].version)
 ])
 
 

@@ -30,6 +30,7 @@ queue <subcommand>\t-\tStash based commit queue. See below subcommands:
 \tlist\t-\tList commits in the queue.
 \tpop\t-\tPops a commit from the queue.
 
+version\t-\tShow version number.
 install\t-\tInstall gifi as git bunch of aliases.
 slack <subcommand>\t-\tIntegration with slack. See below subcommands:
 \tnotify <channel> <message>\t-\tPost a message on given channel.

@@ -1,5 +1,5 @@
 from command import Command, AggregatedCommand, CommandException
-from internal.git_utils import get_repo, check_repo_is_clean
+from utils.git_utils import get_repo, check_repo_is_clean
 
 
 def _pop():

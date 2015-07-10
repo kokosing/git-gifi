@@ -1,6 +1,6 @@
 import sys
 
-from internal import git_utils
+from utils import git_utils
 from command import Command, AggregatedCommand, UnknownCommandException, CommandException
 import feature
 import pkg_resources

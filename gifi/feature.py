@@ -1,10 +1,10 @@
 from git import Repo
 import github
 
-from internal import git_utils
-from internal.configuration import Configuration, configuration_command
+from utils import git_utils
+from utils.configuration import Configuration, configuration_command
 from command import AggregatedCommand, Command, CommandException
-from internal.git_utils import get_repo, check_repo_is_clean, get_from_last_commit_message
+from utils.git_utils import get_repo, check_repo_is_clean, get_from_last_commit_message
 from git_hub import PULL_REQUEST_COMMIT_TAG
 import slack
 

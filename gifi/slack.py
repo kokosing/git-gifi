@@ -1,8 +1,8 @@
 from slackclient import SlackClient
 
 from command import AggregatedCommand, Command, CommandException
-from internal.configuration import Configuration, NOT_SET, configuration_command
-from internal.git_utils import get_repo
+from utils.configuration import Configuration, NOT_SET, configuration_command
+from utils.git_utils import get_repo
 
 _SLACK_MESSAGE_SUFFIX = '(sent via git-gifi)'
 

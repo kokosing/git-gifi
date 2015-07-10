@@ -1,6 +1,6 @@
 from gifi.feature import command as feature
-from gifi.internal.git_utils import current_branch
-from tests.internal.git_test import AbstractGitReposTest
+from gifi.utils.git_utils import current_branch
+from tests.utils.git_test import AbstractGitReposTest
 
 
 class FutureTest(AbstractGitReposTest):

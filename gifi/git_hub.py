@@ -2,8 +2,8 @@ import getpass
 
 from github import Github
 from command import AggregatedCommand, Command, CommandException
-from internal.configuration import Configuration, NOT_SET, configuration_command
-from internal.git_utils import get_repo, remote_origin_url, current_branch, get_from_last_commit_message
+from utils.configuration import Configuration, NOT_SET, configuration_command
+from utils.git_utils import get_repo, remote_origin_url, current_branch, get_from_last_commit_message
 import slack
 
 PULL_REQUEST_COMMIT_TAG = 'Pull request:'

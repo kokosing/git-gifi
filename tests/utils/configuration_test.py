@@ -1,7 +1,7 @@
-from tests.internal.git_test import AbstractGitReposTest
+from tests.utils.git_test import AbstractGitReposTest
 import mock
 from gifi.command import CommandException
-from gifi.internal.configuration import Configuration
+from gifi.utils.configuration import Configuration
 
 
 class ConfigurationTest(AbstractGitReposTest):

@@ -1,5 +1,5 @@
 from gifi.queue import command as queue
-from tests.internal.git_test import AbstractGitReposTest
+from tests.utils.git_test import AbstractGitReposTest
 
 
 class QueueTest(AbstractGitReposTest):

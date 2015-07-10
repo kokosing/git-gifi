@@ -1,12 +1,10 @@
 from difflib import unified_diff
-
 from pprint import pprint
-import subprocess
 from tempfile import mkdtemp
 from unittest import TestCase
 
 from gifi.main import command, _main
-from internal.git_test import AbstractGitReposTest
+from utils.git_test import AbstractGitReposTest
 import os
 
 

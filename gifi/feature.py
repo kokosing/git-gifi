@@ -1,15 +1,14 @@
 from git import Repo
+import github
 
 from internal import git_utils
-from internal.configuration import Configuration, NOT_SET, configuration_command
+from internal.configuration import Configuration, configuration_command
 from command import AggregatedCommand, Command, CommandException
-from internal.git_utils import get_repo, check_repo_is_clean, remote_origin_url
-from git_hub import get_github
+from internal.git_utils import get_repo, check_repo_is_clean, get_from_last_commit_message
+from git_hub import PULL_REQUEST_COMMIT_TAG
 import slack
 
 _FEATURE_BRANCH_PREFIX = 'feature_'
-_PULL_REQUEST_COMMIT_TAG = 'Pull request: '
-_SLACK_MESSAGE_SUFFIX = '(sent via git-gifi)'
 
 
 def _start(feature):
@@ -35,32 +34,7 @@ def _publish():
     repo.git.push('-f', '-u', 'origin', 'HEAD:%s' % current_branch)
     config = _configuration(repo)
     if config.publish_with_pull_request:
-        origin_url = remote_origin_url(repo)
-        full_repo_name = origin_url.split(':')[1].split('.')[0]
-
-        pull = get_github(repo).get_repo(full_repo_name).create_pull(
-            title=repo.head.commit.summary,
-            body=repo.head.commit.message,
-            head=current_branch,
-            base='master'
-        )
-        repo.git.commit('--amend', '-m',
-                        '%s\n\n%s %s' % (repo.head.commit.message, _PULL_REQUEST_COMMIT_TAG, pull.html_url))
-        print 'Pull request URL: %s' % pull.html_url
-
-        channel = config.slack_pr_notification_channel
-        if channel is not NOT_SET:
-            reviewers = _get_from_last_commit_message(repo, 'Reviewers:')
-            message = '%s Please review: %s %s' % (', '.join(map(lambda r: '@%s' % r, reviewers)), pull.html_url, _SLACK_MESSAGE_SUFFIX)
-            slack.notify(channel, message)
-
-
-def _get_from_last_commit_message(repo, item_header):
-    commit_message_lines = repo.head.commit.message.split('\n')
-    lines_with_item = [e for e in commit_message_lines if e.startswith(item_header)]
-    items = map(lambda e: e.split('%s:' % item_header)[1].split(','), lines_with_item)
-    items = [item.strip() for sub_list in items for item in sub_list]
-    return items
+        github.request()
 
 
 def _finish():
@@ -79,11 +53,9 @@ def _finish():
     repo.git.rebase('origin/master')
     repo.git.push('origin', ':%s' % current_branch)
     repo.git.branch('-D', current_branch)
-    if config.slack_pr_notification_channel is not NOT_SET:
-        pull_requests = _get_from_last_commit_message(repo, _PULL_REQUEST_COMMIT_TAG)
-        if len(pull_requests) > 0:
-            slack.notify(config.slack_pr_notification_channel,
-                         '%s merged %s' % (', '.join(pull_requests), _SLACK_MESSAGE_SUFFIX))
+    pull_requests = get_from_last_commit_message(repo, PULL_REQUEST_COMMIT_TAG)
+    if len(pull_requests) > 0:
+        slack.notify('%s merged.' % ', '.join(pull_requests))
 
 
 def _configuration(repo=None):
@@ -91,7 +63,6 @@ def _configuration(repo=None):
     return Configuration(repo, 'feature', {
         'finish-with-rebase-interactive': (False, 'Should do a rebase interactive during feature finishing'),
         'publish-with-pull-request': (False, 'Should create a pull request during feature publishing'),
-        'slack-pr-notification-channel': (NOT_SET, 'If set, then there will be a message sent about pull request changes')
     })
 
 

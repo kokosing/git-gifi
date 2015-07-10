@@ -4,20 +4,27 @@ from command import AggregatedCommand, Command, CommandException
 from internal.configuration import Configuration, NOT_SET, configuration_command
 from internal.git_utils import get_repo
 
+_SLACK_MESSAGE_SUFFIX = '(sent via git-gifi)'
+
 
 def _configuration(repo=None):
     repo = get_repo(repo)
     return Configuration(repo, 'slack', {
-        'access-token': (NOT_SET, 'Slack access token')
+        'access-token': (NOT_SET, 'Slack access token'),
+        'notification-channel': (NOT_SET, 'Slack channel to where notification will be send')
     })
 
 
-def notify(channel, message):
+def notify(message):
     config = _configuration()
     if config.access_token is NOT_SET:
         raise missingConfigurationException('access-token')
+    if config.notification_channel is NOT_SET:
+        print 'WARNING: no notification sent to slack channel. Use slack-configure to set notification channel.'
+        return
     client = SlackClient(config.access_token)
-    client.api_call('chat.postMessage', channel='#%s' % channel, text=message, as_user=True)
+    message = '%s %s' % (message % _SLACK_MESSAGE_SUFFIX)
+    client.api_call('chat.postMessage', channel='#%s' % config.notification_channel, text=message, as_user=True)
 
 
 def missingConfigurationException(item):
@@ -25,6 +32,6 @@ def missingConfigurationException(item):
 
 
 command = AggregatedCommand('slack', 'Integration with slack.', [
-    Command('notify', 'Post a message on given channel.', notify, '<channel> <message>'),
+    Command('notify', 'Post a message on given channel.', notify, '<message>'),
     configuration_command(_configuration, 'Configure slack settings.')
 ])

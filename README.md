@@ -42,6 +42,7 @@ Note that authentication information are stored per repository. Thanks to that i
 	git github-configure
 	
 ##### Pull request
+With **git github-request** you can post a new pull request from current branch. It is required that branch is not 'master' and it is already pushed.
 In order to create a pull request during **git feature-publish**, please do **git feature-configure** first and enable pull request creation.
 
 ###Slack
@@ -51,9 +52,9 @@ To use github integration you need to authenticate first obtain an access token 
 	
 	
 ##### Notify about pull request changes
-If you want to send a notifaction to slack channel about pull request changes you need to enable it by specifying the channel to which you wan to send messages with
+If you want to send a notifaction to slack channel about pull request changes you need to enable it by specifying the channel to which you want to send messages.
 
-	git feature-configure
+	git slack-configure
 	
 Additinally, if you want to send notification to particular people on slack like: mike and john, then add below line to your last commit message in pull request:
 

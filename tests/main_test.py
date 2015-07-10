@@ -17,7 +17,8 @@ Usage:
 
 Commands:
 github <subcommand>\t-\tIntegration with github. See below subcommands:
-\tauthenticate\t-\tCreates a new feature branch.
+\tauthenticate\t-\tAuthenticate and retrieve github access token.
+\trequest\t-\tCreates a pull request from current branch.
 \tconfigure <configuration level>\t-\tConfigure github settings.
 
 help\t-\tDisplay this window.
@@ -36,7 +37,7 @@ queue <subcommand>\t-\tStash based commit queue. See below subcommands:
 version\t-\tShow version number.
 install\t-\tInstall gifi as git bunch of aliases.
 slack <subcommand>\t-\tIntegration with slack. See below subcommands:
-\tnotify <channel> <message>\t-\tPost a message on given channel.
+\tnotify <message>\t-\tPost a message on given channel.
 \tconfigure <configuration level>\t-\tConfigure slack settings.
 
 '''

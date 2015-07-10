@@ -24,17 +24,19 @@ class AbstractGitReposTest(TestCase):
         shutil.rmtree(self.remote_repo.working_tree_dir)
         shutil.rmtree(self.local_repo.working_tree_dir)
 
-    def commit_remote_file(self, fileName):
-        self.commit_file(self.remote_repo, fileName)
+    def commit_remote_file(self, fileName, commit_message=None):
+        self.commit_file(self.remote_repo, fileName, commit_message)
 
-    def commit_local_file(self, fileName):
-        self.commit_file(self.local_repo, fileName)
+    def commit_local_file(self, fileName, commit_message=None):
+        self.commit_file(self.local_repo, fileName, commit_message)
 
-    def commit_file(self, repo, fileName):
+    def commit_file(self, repo, fileName, commit_message=None):
         filePath = os.path.join(repo.working_tree_dir, fileName)
         open(filePath, 'w').close()
         repo.index.add([filePath])
-        repo.index.commit('Add %s' % filePath)
+        if commit_message is None:
+            commit_message = 'Add %s' % filePath
+        repo.index.commit(commit_message)
 
     def remote_files_count(self, branch = 'master'):
         self.remote_repo.heads[branch].checkout()

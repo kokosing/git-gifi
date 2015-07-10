@@ -3,9 +3,10 @@ from pprint import pprint
 from tempfile import mkdtemp
 from unittest import TestCase
 
-from gifi.main import command, _main
 from utils.git_test import AbstractGitReposTest
 import os
+
+from gifi.main import command, _main
 
 
 def test_help():
@@ -79,3 +80,7 @@ class GifiWorksOutsideOfGit(TestCase):
 
     def test_version(self):
         _main(['version'])
+
+    def test_repo_dependant_command(self):
+        # no unhandled exception is thrown
+        _main(['feature', 'publish'])

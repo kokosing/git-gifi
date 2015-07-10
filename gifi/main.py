@@ -71,7 +71,7 @@ def _main(args):
     try:
         result = command(*args)
         if result is not None:
-            print result
+            print(result)
     except UnknownCommandException:
         print "Wrong command, try 'help'."
     except CommandException as e:

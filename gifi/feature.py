@@ -1,4 +1,3 @@
-from git import Repo
 import github
 
 from utils import git_utils
@@ -12,7 +11,7 @@ _FEATURE_BRANCH_PREFIX = 'feature_'
 
 
 def _start(feature):
-    repo = Repo('.')
+    repo = get_repo()
     if feature is None:
         raise CommandException('No feature name given')
 
@@ -24,6 +23,7 @@ def _start(feature):
 
     repo.git.fetch()
     repo.create_head(feature_branch, 'origin/master')
+    repo.heads[feature_branch].set_tracking_branch(repo.remotes.origin.refs.master)
     repo.heads[feature_branch].checkout()
 
 

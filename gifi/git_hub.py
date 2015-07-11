@@ -48,25 +48,33 @@ def _get_github_url(repo=None):
 
 def request(repo=None):
     repo = get_repo(repo)
-    cur_branch = current_branch(repo)
-    if cur_branch is 'master':
-        raise CommandException("Unable to create a pull request from 'master' branch.")
 
-    origin_url = remote_origin_url(repo)
-    full_repo_name = origin_url.split(':')[1].split('.')[0]
+    try:
+        pull = _create_pull_request(repo)
+    except GithubException as e:
+        raise CommandException('Unable to create a pull request: %s' % e.data['message'])
 
-    pull = get_github(repo).get_repo(full_repo_name).create_pull(
-        title=repo.head.commit.summary,
-        body=repo.head.commit.message,
-        head=cur_branch,
-        base='master'
-    )
     repo.git.commit('--amend', '-m', '%s\n\n%s %s' % (repo.head.commit.message, PULL_REQUEST_COMMIT_TAG, pull.html_url))
     print 'Pull request URL: %s' % pull.html_url
 
     reviewers = get_from_last_commit_message(repo, 'Reviewers:')
     message = '%s Please review: %s' % (', '.join(map(lambda r: '@%s' % r, reviewers)), pull.html_url)
     slack.notify(message)
+
+
+def _create_pull_request(repo):
+    origin_url = remote_origin_url(repo)
+    full_repo_name = origin_url.split(':')[1].split('.')[0]
+    cur_branch = current_branch(repo)
+    if cur_branch is 'master':
+        raise CommandException("Unable to create a pull request from 'master' branch.")
+    pull = get_github(repo).get_repo(full_repo_name).create_pull(
+        title=repo.head.commit.summary,
+        body=repo.head.commit.message,
+        head=cur_branch,
+        base='master'
+    )
+    return pull
 
 
 def missingConfigurationException(item):

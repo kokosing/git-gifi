@@ -64,11 +64,9 @@ def request(repo=None):
     repo.git.commit('--amend', '-m', '%s\n\n%s %s' % (repo.head.commit.message, PULL_REQUEST_COMMIT_TAG, pull.html_url))
     print 'Pull request URL: %s' % pull.html_url
 
-    channel = _configuration(repo).slack_pr_notification_channel
-    if channel is not NOT_SET:
-        reviewers = get_from_last_commit_message(repo, 'Reviewers:')
-        message = '%s Please review: %s' % (', '.join(map(lambda r: '@%s' % r, reviewers)), pull.html_url)
-        slack.notify(channel, message)
+    reviewers = get_from_last_commit_message(repo, 'Reviewers:')
+    message = '%s Please review: %s' % (', '.join(map(lambda r: '@%s' % r, reviewers)), pull.html_url)
+    slack.notify(message)
 
 
 def missingConfigurationException(item):

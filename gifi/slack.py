@@ -17,11 +17,10 @@ def _configuration(repo=None):
 
 def notify(message):
     config = _configuration()
+    if config.notification_channel is NOT_SET:
+        raise missingConfigurationException('notification-channel')
     if config.access_token is NOT_SET:
         raise missingConfigurationException('access-token')
-    if config.notification_channel is NOT_SET:
-        print 'WARNING: no notification sent to slack channel. Use slack-configure to set notification channel.'
-        return
     client = SlackClient(config.access_token)
     message = '%s %s' % (message % _SLACK_MESSAGE_SUFFIX)
     client.api_call('chat.postMessage', channel='#%s' % config.notification_channel, text=message, as_user=True)

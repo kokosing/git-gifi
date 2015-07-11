@@ -72,7 +72,7 @@ def request(repo=None):
 
 
 def missingConfigurationException(item):
-    return CommandException('No github %s is set, please do configure or authenticate github first.' % item)
+    return CommandException('No github %s is set, please do configure or authorize github first.' % item)
 
 
 def _configuration(repo=None):

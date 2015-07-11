@@ -52,7 +52,7 @@ def request(repo=None):
     try:
         pull = _create_pull_request(repo)
     except GithubException as e:
-        raise CommandException('Unable to create a pull request: %s' % e.data['message'])
+        raise CommandException('Unable to create a pull request: %s' % e.data['errors'])
 
     repo.git.commit('--amend', '-m', '%s\n\n%s %s' % (repo.head.commit.message, PULL_REQUEST_COMMIT_TAG, pull.html_url))
     print 'Pull request URL: %s' % pull.html_url

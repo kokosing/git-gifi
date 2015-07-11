@@ -1,4 +1,5 @@
 import getpass
+import logging
 
 from github import Github, GithubException
 from command import AggregatedCommand, Command, CommandException
@@ -24,9 +25,19 @@ def _create_authorization(config, config_level, gh):
         authorization = gh.get_user().create_authorization(scopes=['repo'], note='git-gifi')
         config.set('access-token', authorization.token, config_level)
     except GithubException as e:
-        if 'code' in e.data and e.data['code'] is 'already_exists':
-            raise CommandException('Authorization token is already created, copy-paste token from your github profile and pass it to github-configure.')
-        raise CommandException('Unable to authenticate: %s' % e.data['message'])
+        _handle_github_exception(e, 'create an authorization')
+
+
+def _handle_github_exception(e, event):
+    logging.warn('%s raised an exception: %s' % (event, e))
+    error = ', '.join(map(_map_github_error, e.data['errors']))
+    raise CommandException('Unable to %s: %s' % (event, error))
+
+
+def _map_github_error(error):
+    if error['code'] == 'already_exists':
+        return 'Authorization already exists, copy paste existing token and use it in configure command.'
+    return error
 
 
 def get_github(repo):
@@ -52,7 +63,7 @@ def request(repo=None):
     try:
         pull = _create_pull_request(repo)
     except GithubException as e:
-        raise CommandException('Unable to create a pull request: %s' % e.data['errors'])
+        _handle_github_exception(e, 'create a pull request')
 
     repo.git.commit('--amend', '-m', '%s\n\n%s %s' % (repo.head.commit.message, PULL_REQUEST_COMMIT_TAG, pull.html_url))
     print 'Pull request URL: %s' % pull.html_url

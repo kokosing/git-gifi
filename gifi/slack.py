@@ -22,7 +22,7 @@ def notify(message):
     if config.access_token is NOT_SET:
         raise missingConfigurationException('access-token')
     client = SlackClient(config.access_token)
-    message = '%s %s' % (message % _SLACK_MESSAGE_SUFFIX)
+    message = '%s %s' % (message, _SLACK_MESSAGE_SUFFIX)
     client.api_call('chat.postMessage', channel='#%s' % config.notification_channel, text=message, as_user=True)
 
 

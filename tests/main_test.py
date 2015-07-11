@@ -5,7 +5,6 @@ from unittest import TestCase
 
 from utils.git_test import AbstractGitReposTest
 import os
-
 from gifi.main import command, _main
 
 
@@ -16,7 +15,7 @@ Usage:
 
 Commands:
 github <subcommand>\t-\tIntegration with github. See below subcommands:
-\tauthenticate\t-\tAuthenticate and retrieve github access token.
+\tauthorize\t-\tCreate authorization and retrieve github access token.
 \trequest\t-\tCreates a pull request from current branch.
 \tconfigure <configuration level>\t-\tConfigure github settings.
 
@@ -54,21 +53,23 @@ def test_main_handles_unknown_command():
 def test_main_handles_no_command():
     _main([])
 
+
 class AliasesInstallerTest(AbstractGitReposTest):
     def test_aliases_installer(self):
-       command('install', 'repository')
-       config_reader = self.local_repo.config_reader()
-       config_reader.get_value('alias', 'queue-push')
-       config_reader.get_value('alias', 'queue-list')
-       config_reader.get_value('alias', 'queue-pop')
-       config_reader.get_value('alias', 'feature-start')
-       config_reader.get_value('alias', 'feature-finish')
-       config_reader.get_value('alias', 'feature-publish')
-       config_reader.get_value('alias', 'feature-configure')
-       config_reader.release()
+        command('install', 'repository')
+        config_reader = self.local_repo.config_reader()
+        config_reader.get_value('alias', 'queue-push')
+        config_reader.get_value('alias', 'queue-list')
+        config_reader.get_value('alias', 'queue-pop')
+        config_reader.get_value('alias', 'feature-start')
+        config_reader.get_value('alias', 'feature-finish')
+        config_reader.get_value('alias', 'feature-publish')
+        config_reader.get_value('alias', 'feature-configure')
+        config_reader.release()
 
-       # call one alias
-       self.local_repo.git.__getattr__('queue-list')
+        # call one alias
+        self.local_repo.git.__getattr__('queue-list')
+
 
 class GifiWorksOutsideOfGit(TestCase):
     def setUp(self):

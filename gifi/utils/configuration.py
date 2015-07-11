@@ -4,6 +4,9 @@ _CONFIGURATION_PREFIX = 'gifi'
 
 NOT_SET = 'not-set'
 
+REPOSITORY_CONFIG_LEVEL = 'repository'
+GLOBAL_CONFIG_LEVEL = 'global'
+
 
 class Configuration(object):
     def __init__(self, repo, prefix, configuration):
@@ -36,7 +39,7 @@ class Configuration(object):
     def description(self, item):
         return self.configuration[item][1]
 
-    def set(self, item, value, config_level='repository'):
+    def set(self, item, value, config_level=REPOSITORY_CONFIG_LEVEL):
         config_writer = self.repo.config_writer(config_level)
         config_writer.set_value(_CONFIGURATION_PREFIX, self._key(item), value)
         config_writer.release()
@@ -58,8 +61,10 @@ class Configuration(object):
         else:
             raise CommandException('Unsupported type: %s' % destType)
 
-    def configure(self, config_level='repository'):
-        for key in self.list():
+    def configure(self, config_level=REPOSITORY_CONFIG_LEVEL, keys=None):
+        if keys is None:
+            keys = self.list()
+        for key in keys:
             current_value = self[key]
             new_value = raw_input("%s (%s): " % (self.description(key), current_value))
             if new_value is not '':
@@ -67,4 +72,4 @@ class Configuration(object):
 
 
 def configuration_command(configuration, description):
-    return Command('configure', description, lambda config_level: configuration().configure(config_level), '<configuration level>')
+    return Command('configure', description, lambda config_level=REPOSITORY_CONFIG_LEVEL: configuration().configure(config_level), '<configuration level>')

@@ -33,11 +33,11 @@ It is a simpliified version of [gitflow](https://www.atlassian.com/git/tutorials
 	git feature-finish
 
 ###Github
-To use github integration you need to authenticate first (obtain an access token):
+To use github integration you need to authoriize first (obtain an access token):
 
-	git github-authenticate
+	git github-authorize
 	
-Note that authentication information are stored per repository. Thanks to that it is possible to work with different github providers like github.com or github enterprise. However, if you have multiple repositories on the same github providers then you won't be able to authenticate git-gifi again, as it is already authenticated for different reposotiry but same github provider. In that case you need to go to your github profile settings, copy git-gifi access token and us it in below command:
+Note that authorization information are stored per repository. Thanks to that it is possible to work with different github providers like github.com or github enterprise. However, if you have multiple repositories on the same github providers then you won't be able to authenticate git-gifi again, as it is already authenticated for different reposotiry but same github provider. In that case you need to go to your github profile settings, copy git-gifi access token and us it in below command:
 
 	git github-configure
 	
@@ -49,6 +49,10 @@ In order to create a pull request during **git feature-publish**, please do **gi
 To use github integration you need to authenticate first obtain an access token for slack web api and the pass it to:
 
 	git slack-configure
+
+By default when you run ``*-configure``` command configuration is stored in local repository. Typically slack configuration does not change between projects, so in order to store it globally (system wide) you can run below command. Thanks to that slack configuration will be reused between git repositories on your system:
+
+	git slack-configure global
 	
 	
 ##### Notify about pull request changes

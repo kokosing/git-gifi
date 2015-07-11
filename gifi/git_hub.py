@@ -1,22 +1,32 @@
 import getpass
 
-from github import Github
+from github import Github, GithubException
 from command import AggregatedCommand, Command, CommandException
-from utils.configuration import Configuration, NOT_SET, configuration_command
+from github.MainClass import DEFAULT_BASE_URL
+from utils.configuration import Configuration, NOT_SET, configuration_command, REPOSITORY_CONFIG_LEVEL
 from utils.git_utils import get_repo, remote_origin_url, current_branch, get_from_last_commit_message
 import slack
 
 PULL_REQUEST_COMMIT_TAG = 'Pull request:'
 
 
-def _authenticate():
+def _authorize(config_level=REPOSITORY_CONFIG_LEVEL):
     config = _configuration()
     if config.login is NOT_SET:
-        config.configure(['login'])
+        config.configure(config_level, keys=['login'])
     pw = getpass.getpass('Enter your Github password (will not be stored anywhere): ')
     gh = Github(config.login, pw, base_url=_get_github_url())
-    authorization = gh.get_user().create_authorization(scopes=['repo'], note='git-gifi')
-    config.set('access-token', authorization.token)
+    _create_authorization(config, config_level, gh)
+
+
+def _create_authorization(config, config_level, gh):
+    try:
+        authorization = gh.get_user().create_authorization(scopes=['repo'], note='git-gifi')
+        config.set('access-token', authorization.token, config_level)
+    except GithubException as e:
+        if 'code' in e.data and e.data['code'] is 'already_exists':
+            raise CommandException('Authorization token is already created, copy-paste token from your github profile and pass it to github-configure.')
+        raise CommandException('Unable to authenticate: %s' % e.data['message'])
 
 
 def get_github(repo):
@@ -30,40 +40,45 @@ def get_github(repo):
 
 def _get_github_url(repo=None):
     origin_url = remote_origin_url(repo)
-    github_url = None
     if 'github.com' not in origin_url:
-        github_url = 'https://%s/api/v3' % origin_url.split('@')[1].split(':')[0]
-        print 'Using github URL: %s' % github_url
-    return github_url
+        return 'https://%s/api/v3' % origin_url.split('@')[1].split(':')[0]
+    else:
+        return DEFAULT_BASE_URL
 
 
 def request(repo=None):
     repo = get_repo(repo)
-    cur_branch = current_branch(repo)
-    if cur_branch is 'master':
-        raise CommandException("Unable to create a pull request from 'master'")
 
+    try:
+        pull = _create_pull_request(repo)
+    except GithubException as e:
+        raise CommandException('Unable to create a pull request: %s' % e.data['errors'])
+
+    repo.git.commit('--amend', '-m', '%s\n\n%s %s' % (repo.head.commit.message, PULL_REQUEST_COMMIT_TAG, pull.html_url))
+    print 'Pull request URL: %s' % pull.html_url
+
+    reviewers = get_from_last_commit_message(repo, 'Reviewers:')
+    message = '%s Please review: %s' % (', '.join(map(lambda r: '@%s' % r, reviewers)), pull.html_url)
+    slack.notify(message)
+
+
+def _create_pull_request(repo):
     origin_url = remote_origin_url(repo)
     full_repo_name = origin_url.split(':')[1].split('.')[0]
-
+    cur_branch = current_branch(repo)
+    if cur_branch is 'master':
+        raise CommandException("Unable to create a pull request from 'master' branch.")
     pull = get_github(repo).get_repo(full_repo_name).create_pull(
         title=repo.head.commit.summary,
         body=repo.head.commit.message,
         head=cur_branch,
         base='master'
     )
-    repo.git.commit('--amend', '-m', '%s\n\n%s %s' % (repo.head.commit.message, PULL_REQUEST_COMMIT_TAG, pull.html_url))
-    print 'Pull request URL: %s' % pull.html_url
-
-    channel = _configuration(repo).slack_pr_notification_channel
-    if channel is not NOT_SET:
-        reviewers = get_from_last_commit_message(repo, 'Reviewers:')
-        message = '%s Please review: %s' % (', '.join(map(lambda r: '@%s' % r, reviewers)), pull.html_url)
-        slack.notify(channel, message)
+    return pull
 
 
 def missingConfigurationException(item):
-    return CommandException('No github %s is set, please do configure or authenticate github first.' % item)
+    return CommandException('No github %s is set, please do configure or authorize github first.' % item)
 
 
 def _configuration(repo=None):
@@ -75,7 +90,7 @@ def _configuration(repo=None):
 
 
 command = AggregatedCommand('github', 'Integration with github.', [
-    Command('authenticate', 'Authenticate and retrieve github access token.', _authenticate),
+    Command('authorize', 'Create authorization and retrieve github access token.', _authorize),
     Command('request', 'Creates a pull request from current branch.', request),
     configuration_command(_configuration, 'Configure github settings.')
 ])

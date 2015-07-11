@@ -56,8 +56,9 @@ function release() {
   twine upload dist/*
   NEXT_VERSION=$(echo $VERSION + 1 | bc)
   _change_version 0.$NEXT_VERSION-SNAPSHOT
-  git commit -a -m "Relase 0.$VERSION"
-  git tag -a -m "Release 0.$VERSION" 0.$VERSION
+  MESSAGE="Release 0.$VERSION"
+  git commit -a -m "$MESSAGE"
+  git tag -a -m "$MESSAGE" 0.$VERSION
   git push
   git push --tags
 }

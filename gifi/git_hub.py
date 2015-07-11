@@ -50,7 +50,7 @@ def request(repo=None):
     repo = get_repo(repo)
     cur_branch = current_branch(repo)
     if cur_branch is 'master':
-        raise CommandException("Unable to create a pull request from 'master.'")
+        raise CommandException("Unable to create a pull request from 'master' branch.")
 
     origin_url = remote_origin_url(repo)
     full_repo_name = origin_url.split(':')[1].split('.')[0]

@@ -1,0 +1,153 @@
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on https://github.com/jonrohan -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
+  <link rel="stylesheet" href="stylesheets/github-dark.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>Git-gifi</title>
+  <meta name="description" content="Git and github enhancements to git.">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">Git-gifi</h1>
+    </header>
+    <div id="container">
+      <p class="tagline">Git and github enhancements to git.</p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/kokosing/git-gifi/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/kokosing/git-gifi/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/kokosing/git-gifi" class="code">View Git-gifi on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
+          <h1>
+<a id="git-gifi" class="anchor" href="#git-gifi" aria-hidden="true"><span class="octicon octicon-link"></span></a>git-gifi</h1>
+
+<p><a href="https://travis-ci.org/kokosing/git-gifi/"><img src="https://api.travis-ci.org/kokosing/git-gifi.svg" alt="travis"></a></p>
+
+<p>Git and github enhancements to git.</p>
+
+<hr>
+
+<h2>
+<a id="requirmentes" class="anchor" href="#requirmentes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirmentes:</h2>
+
+<ul>
+<li> git (tested with version 1.9.1)</li>
+<li> python 2.7</li>
+</ul>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>In order to install git-gifi please do the following (usage of virutalevn is recommend):</p>
+
+<pre><code>pip install git-gifi
+# if you prefer to gifi via set of git aliases, then
+gifi install
+</code></pre>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a id="queue" class="anchor" href="#queue" aria-hidden="true"><span class="octicon octicon-link"></span></a>Queue</h3>
+
+<p>Concept of queue comes from <a href="http://hgbook.red-bean.com/read/managing-change-with-mercurial-queues.html">Mercurial Queues</a>. However this implementation is much simplier (git stash based). You can push (with <strong>gifi push</strong>) your commit on the queue (into git stash) and then pop (with <strong>git pop</strong>) it from the queue to your workspace.</p>
+
+<h3>
+<a id="feature" class="anchor" href="#feature" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature</h3>
+
+<p>It is a simpliified version of <a href="https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow">gitflow</a>. It is well suited to the case where you and your team work always on the same branch called <em>master</em> (no <em>develop</em> branch). For each feature you create a <em>feature branch</em> wich then is merged into <em>master</em>. Releases are just tagged commits in <em>master</em>.</p>
+
+<pre><code>git feature-start new_feature
+git add new_feature.code
+git commit  -m 'new feature commit message'
+git feature-publish
+# after code review
+git feature-finish
+</code></pre>
+
+<h3>
+<a id="github" class="anchor" href="#github" aria-hidden="true"><span class="octicon octicon-link"></span></a>Github</h3>
+
+<p>To use github integration you need to authoriize first (obtain an access token):</p>
+
+<pre><code>git github-authorize
+</code></pre>
+
+<p>Note that authorization information are stored per repository. Thanks to that it is possible to work with different github providers like github.com or github enterprise. However, if you have multiple repositories on the same github providers then you won't be able to authenticate git-gifi again, as it is already authenticated for different reposotiry but same github provider. In that case you need to go to your github profile settings, copy git-gifi access token and us it in below command:</p>
+
+<pre><code>git github-configure
+</code></pre>
+
+<h5>
+<a id="pull-request" class="anchor" href="#pull-request" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pull request</h5>
+
+<p>With <strong>git github-request</strong> you can post a new pull request from current branch. It is required that branch is not 'master' and it is already pushed.
+In order to create a pull request during <strong>git feature-publish</strong>, please do <strong>git feature-configure</strong> first and enable pull request creation.</p>
+
+<h3>
+<a id="slack" class="anchor" href="#slack" aria-hidden="true"><span class="octicon octicon-link"></span></a>Slack</h3>
+
+<p>To use github integration you need to authenticate first obtain an access token for slack web api and the pass it to:</p>
+
+<pre><code>git slack-configure
+</code></pre>
+
+<p>By default when you run <code>*-configure</code>` command configuration is stored in local repository. Typically slack configuration does not change between projects, so in order to store it globally (system wide) you can run below command. Thanks to that slack configuration will be reused between git repositories on your system:</p>
+
+<pre><code>git slack-configure global
+</code></pre>
+
+<h5>
+<a id="notify-about-pull-request-changes" class="anchor" href="#notify-about-pull-request-changes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Notify about pull request changes</h5>
+
+<p>If you want to send a notifaction to slack channel about pull request changes you need to enable it by specifying the channel to which you want to send messages.</p>
+
+<pre><code>git slack-configure
+</code></pre>
+
+<p>Additinally, if you want to send notification to particular people on slack like: mike and john, then add below line to your last commit message in pull request:</p>
+
+<pre><code>Reviewers: mike, john
+</code></pre>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="owner">
+      <p><a href="https://github.com/kokosing" class="avatar"><img src="https://avatars1.githubusercontent.com/u/7569403?v=3&amp;s=60" width="48" height="48"></a> <a href="https://github.com/kokosing">kokosing</a> maintains <a href="https://github.com/kokosing/git-gifi">Git-gifi</a></p>
+
+
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/kokosing/git-gifi/tarball/master" class="tar">tar</a><a href="https://github.com/kokosing/git-gifi/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
+
+  
+</body>
+</html>

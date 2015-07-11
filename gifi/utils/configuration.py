@@ -67,4 +67,4 @@ class Configuration(object):
 
 
 def configuration_command(configuration, description):
-    return Command('configure', description, lambda config_level: configuration().configure(config_level), '<configuration level>')
+    return Command('configure', description, lambda config_level='repository': configuration().configure(config_level), '<configuration level>')

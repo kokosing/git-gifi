@@ -49,6 +49,10 @@ In order to create a pull request during **git feature-publish**, please do **gi
 To use github integration you need to authenticate first obtain an access token for slack web api and the pass it to:
 
 	git slack-configure
+
+By default when you run ``*-configure``` command configuration is stored in local repository. Typically slack configuration does not change between projects, so in order to store it globally (system wide) you can run below command. Thanks to that slack configuration will be reused between git repositories on your system:
+
+	git slack-configure global
 	
 	
 ##### Notify about pull request changes

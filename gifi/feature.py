@@ -1,4 +1,4 @@
-import github
+import git_hub
 
 from utils import git_utils
 from utils.configuration import Configuration, configuration_command
@@ -34,7 +34,7 @@ def _publish():
     repo.git.push('-f', '-u', 'origin', 'HEAD:%s' % current_branch)
     config = _configuration(repo)
     if config.publish_with_pull_request:
-        github.request()
+        git_hub.request()
 
 
 def _finish():

@@ -72,7 +72,7 @@ def request(repo=None):
     print 'Pull request URL: %s' % pull.html_url
 
     reviewers = get_from_last_commit_message(repo, 'Reviewers')
-    message = '%s Please review: %s' % (', '.join(map(lambda r: '@%s' % r, reviewers)), pull.html_url)
+    message = '%s Please review: %s' % (', '.join(map(lambda r: '<@%s>' % r, reviewers)), pull.html_url)
     slack.notify(message)
 
 

@@ -8,7 +8,7 @@ from utils.configuration import Configuration, NOT_SET, configuration_command, R
 from utils.git_utils import get_repo, remote_origin_url, current_branch, get_from_last_commit_message
 import slack
 
-PULL_REQUEST_COMMIT_TAG = 'Pull request:'
+PULL_REQUEST_COMMIT_TAG = 'Pull request'
 
 
 def _authorize(config_level=REPOSITORY_CONFIG_LEVEL):
@@ -68,10 +68,10 @@ def request(repo=None):
     except GithubException as e:
         _handle_github_exception(e, 'create a pull request')
 
-    repo.git.commit('--amend', '-m', '%s\n\n%s %s' % (repo.head.commit.message, PULL_REQUEST_COMMIT_TAG, pull.html_url))
+    repo.git.commit('--amend', '-m', '%s\n\n%s: %s' % (repo.head.commit.message, PULL_REQUEST_COMMIT_TAG, pull.html_url))
     print 'Pull request URL: %s' % pull.html_url
 
-    reviewers = get_from_last_commit_message(repo, 'Reviewers:')
+    reviewers = get_from_last_commit_message(repo, 'Reviewers')
     message = '%s Please review: %s' % (', '.join(map(lambda r: '@%s' % r, reviewers)), pull.html_url)
     slack.notify(message)
 

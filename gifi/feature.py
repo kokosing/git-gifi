@@ -70,7 +70,7 @@ def _configuration(repo=None):
     return Configuration(repo, 'feature', {
         'finish-with-rebase-interactive': (False, 'Should do a rebase interactive during feature finishing'),
         'publish-with-pull-request': (False, 'Should create a pull request during feature publishing'),
-        'start-on-current-branch': (False, 'Should start a feature branch on current branch (by default it starts on origin/master')
+        'start-on-current-branch': (False, 'Should start a feature branch on current branch, by default it starts on origin/master')
     })
 
 

@@ -10,3 +10,7 @@ class GitUtilsTest(AbstractGitReposTest):
     def test_multiple_values_tag(self):
         self.commit_local_file('tmp', 'tag: one, two, three')
         assert get_from_last_commit_message(self.local_repo, 'tag') == ['one', 'two', 'three']
+
+    def test_no_tag_value(self):
+        self.commit_local_file('tmp', 'tmp')
+        assert get_from_last_commit_message(self.local_repo, 'tag') == []

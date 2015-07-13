@@ -30,7 +30,10 @@ def _create_authorization(config, config_level, gh):
 
 def _handle_github_exception(e, event):
     logging.warn('%s raised an exception: %s' % (event, e))
-    error = ', '.join(map(_map_github_error, e.data['errors']))
+    if 'errors' in e.data:
+        error = ', '.join(map(_map_github_error, e.data['errors']))
+    else:
+        error = e.data['message']
     raise CommandException('Unable to %s: %s' % (event, error))
 
 

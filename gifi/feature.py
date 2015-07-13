@@ -10,8 +10,10 @@ import slack
 _FEATURE_BRANCH_PREFIX = 'feature_'
 
 
-def _start(feature):
+def _start(feature=None):
     repo = get_repo()
+    config = _configuration(repo)
+
     if feature is None:
         raise CommandException('No feature name given')
 
@@ -21,9 +23,14 @@ def _start(feature):
     if map(lambda head: head.name, repo.heads).count(feature_branch) != 0:
         raise CommandException("Feature branch '%s' already exists." % feature_branch)
 
+    base = 'master'
+    if config.start_on_current_branch:
+        base = _current_feature_branch(repo)
+    print 'Starting %s on origin/%s.' % (feature_branch, base)
+
     repo.git.fetch()
-    repo.create_head(feature_branch, 'origin/master')
-    repo.heads[feature_branch].set_tracking_branch(repo.remotes.origin.refs.master)
+    repo.create_head(feature_branch, 'origin/%s' % base)
+    repo.heads[feature_branch].set_tracking_branch(repo.remotes.origin.refs[base])
     repo.heads[feature_branch].checkout()
 
 
@@ -63,6 +70,7 @@ def _configuration(repo=None):
     return Configuration(repo, 'feature', {
         'finish-with-rebase-interactive': (False, 'Should do a rebase interactive during feature finishing'),
         'publish-with-pull-request': (False, 'Should create a pull request during feature publishing'),
+        'start-on-current-branch': (False, 'Should start a feature branch on current branch (by default it starts on origin/master')
     })
 
 

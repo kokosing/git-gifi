@@ -60,11 +60,14 @@ def _get_github_url(repo=None):
         return DEFAULT_BASE_URL
 
 
-def request(repo=None):
+def request(base_branch=None, repo=None):
+    if base_branch is None:
+        raise CommandException('No base branch argument is given')
+
     repo = get_repo(repo)
 
     try:
-        pull = _create_pull_request(repo)
+        pull = _create_pull_request(repo, base_branch)
     except GithubException as e:
         _handle_github_exception(e, 'create a pull request')
 
@@ -76,19 +79,18 @@ def request(repo=None):
     slack.notify(message)
 
 
-def _create_pull_request(repo):
+def _create_pull_request(repo, base_branch):
     origin_url = remote_origin_url(repo)
     full_repo_name = origin_url.split(':')[1].split('.')[0]
     cur_branch = current_branch(repo)
-    if cur_branch is 'master':
-        raise CommandException("Unable to create a pull request from 'master' branch.")
-    pull = get_github(repo).get_repo(full_repo_name).create_pull(
+    if cur_branch is base_branch:
+        raise CommandException("Unable to create a pull request from '%s' which is basing on the same branch." % base_branch)
+    return get_github(repo).get_repo(full_repo_name).create_pull(
         title=repo.head.commit.summary,
         body=repo.head.commit.message,
         head=cur_branch,
-        base='master'
+        base=base_branch
     )
-    return pull
 
 
 def missingConfigurationException(item):
@@ -105,6 +107,6 @@ def _configuration(repo=None):
 
 command = AggregatedCommand('github', 'Integration with github.', [
     Command('authorize', 'Create authorization and retrieve github access token.', _authorize),
-    Command('request', 'Creates a pull request from current branch.', request),
+    Command('request', 'Creates a pull request from current branch.', request, '<base branch>'),
     configuration_command(_configuration, 'Configure github settings.')
 ])

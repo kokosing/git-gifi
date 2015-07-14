@@ -16,7 +16,7 @@ Usage:
 Commands:
 github <subcommand>\t-\tIntegration with github. See below subcommands:
 \tauthorize\t-\tCreate authorization and retrieve github access token.
-\trequest\t-\tCreates a pull request from current branch.
+\trequest <base branch>\t-\tCreates a pull request from current branch.
 \tconfigure <configuration level>\t-\tConfigure github settings.
 
 help\t-\tDisplay this window.

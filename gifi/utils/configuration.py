@@ -66,7 +66,7 @@ class Configuration(object):
             keys = self.list()
         for key in keys:
             current_value = self[key]
-            new_value = raw_input("%s (%s): " % (self.description(key), current_value))
+            new_value = raw_input("%s - %s (%s): " % (key, self.description(key), current_value))
             if new_value is not '':
                 self.set(key, self._parse_value(new_value, type(current_value)), config_level)
 

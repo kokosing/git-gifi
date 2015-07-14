@@ -25,7 +25,7 @@ def _start(feature=None):
 
     base = 'master'
     if config.start_on_current_branch:
-        base = _current_feature_branch(repo)
+        base = git_utils.current_branch(repo)
     print 'Starting %s on origin/%s.' % (feature_branch, base)
 
     repo.git.fetch()

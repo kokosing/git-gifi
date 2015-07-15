@@ -34,10 +34,18 @@ def _start(feature=None):
         base_remote = config.working_remote
     print 'Starting %s on %s/%s.' % (feature_branch, base_remote, base_branch)
 
-    repo.git.fetch()
+    _fetch(repo)
     repo.create_head(feature_branch, '%s/%s' % (base_remote, base_branch))
     repo.heads[feature_branch].set_tracking_branch(repo.remotes[base_remote].refs[base_branch])
     repo.heads[feature_branch].checkout()
+
+
+def _fetch(repo):
+    try:
+        repo.git.fetch()
+    except GitCommandError as e:
+        logging.warn('Unable to fetch: %s' % e)
+        print 'WARNING: Unable to fetch changes.'
 
 
 def _publish():

@@ -1,6 +1,9 @@
+import logging
 import subprocess
-import git_hub
 
+from git import GitCommandError
+
+import git_hub
 from utils import git_utils
 from utils.configuration import Configuration, configuration_command
 from command import AggregatedCommand, Command, CommandException
@@ -51,20 +54,31 @@ def _finish():
     repo = get_repo()
     check_repo_is_clean(repo)
     config = _configuration(repo)
-    current_branch = _current_feature_branch(repo)
     repo.git.fetch()
     interactive = '-i' if config.finish_with_rebase_interactive else ''
     rebase_status = subprocess.call('git rebase %s/%s %s' % (config.target_remote, config.target_branch, interactive), shell=True)
     if rebase_status is not 0:
         raise CommandException('Rebase finished with an error, please fix it manually and then feature-finish once again.')
     repo.git.push(config.target_remote, 'HEAD:%s' % config.target_branch)
-    repo.git.checkout(config.target_branch)
-    repo.git.rebase('%s/%s' % (config.target_remote, config.target_branch))
-    repo.git.push(config.working_remote, ':%s' % current_branch)
-    repo.git.branch('-D', current_branch)
+    _discard(repo)
     pull_requests = get_from_last_commit_message(repo, PULL_REQUEST_COMMIT_TAG)
     if len(pull_requests) > 0:
         slack.notify('%s merged.' % ', '.join(pull_requests))
+
+
+def _discard(repo=None):
+    repo = get_repo(repo)
+    config = _configuration(repo)
+    current_branch = _current_feature_branch(repo)
+    repo.git.checkout(config.target_branch)
+    repo.git.rebase('%s/%s' % (config.target_remote, config.target_branch))
+    try:
+        repo.git.push(config.working_remote, ':%s' % current_branch)
+    except GitCommandError as e:
+        logging.warn('Unable to drop remote feature branch: %s' % e)
+        print 'WARNING: Unable to remove remote feature branch. Maybe it was not yet created?'
+    repo.git.branch('-D', current_branch)
+    print 'Feature branch was discarded.'
 
 
 def _configuration(repo=None):
@@ -89,6 +103,7 @@ def _current_feature_branch(repo):
 command = AggregatedCommand('feature', 'Manages a feature branches.', [
     Command('start', 'Creates a new feature branch.', _start, '<feature name>'),
     Command('publish', 'Publishes a feature branch to review.', _publish),
-    Command('finish', 'Closes and pushes a feature to a master branch.', _finish),
+    Command('finish', 'Closes and pushes a feature to a target-remote/target-branch.', _finish),
+    Command('discard', 'Closes a feature branch without a push to a target-remote/target-branch.', _discard),
     configuration_command(_configuration, 'Configure feature behaviour.')
 ])

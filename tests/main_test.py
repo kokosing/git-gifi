@@ -22,9 +22,10 @@ github <subcommand>\t-\tIntegration with github. See below subcommands:
 help\t-\tDisplay this window.
 feature <subcommand>\t-\tManages a feature branches. See below subcommands:
 \tstart <feature name>\t-\tCreates a new feature branch.
-\tfinish\t-\tCloses and pushes a feature to a master branch.
+\tfinish\t-\tCloses and pushes a feature to a target-remote/target-branch.
 \tconfigure <configuration level>\t-\tConfigure feature behaviour.
 \tpublish\t-\tPublishes a feature branch to review.
+\tdiscard\t-\tCloses a feature branch without a push to a target-remote/target-branch.
 
 queue <subcommand>\t-\tStash based commit queue. See below subcommands:
 \tpush\t-\tPushes a commit on the queue.

@@ -60,7 +60,7 @@ class AliasesInstaller(object):
         config_writer.release()
 
 
-command.add_command(Command('install', 'Install gifi as git bunch of aliases.', AliasesInstaller(command)))
+command.add_command(Command('install', 'Install gifi as a bunch of git aliases.', AliasesInstaller(command)))
 
 
 def main():

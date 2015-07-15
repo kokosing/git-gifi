@@ -1,11 +1,12 @@
 import getpass
 import logging
+import feature
 
 from github import Github, GithubException
 from command import AggregatedCommand, Command, CommandException
 from github.MainClass import DEFAULT_BASE_URL
 from utils.configuration import Configuration, NOT_SET, configuration_command, REPOSITORY_CONFIG_LEVEL
-from utils.git_utils import get_repo, remote_origin_url, current_branch
+from utils.git_utils import get_repo, get_remote_url, get_current_branch
 
 PULL_REQUEST_COMMIT_TAG = 'Pull request'
 
@@ -42,7 +43,7 @@ def _map_github_error(error):
     return error
 
 
-def get_github(repo):
+def _get_github(repo):
     config = _configuration(repo)
     if config.login is NOT_SET:
         raise missingConfigurationException('login')
@@ -52,21 +53,17 @@ def get_github(repo):
 
 
 def _get_github_url(repo=None):
-    origin_url = remote_origin_url(repo)
+    origin_url = get_remote_url(repo)
     if 'github.com' not in origin_url:
         return 'https://%s/api/v3' % origin_url.split('@')[1].split(':')[0]
     else:
         return DEFAULT_BASE_URL
 
 
-def request(base_branch=None, repo=None):
-    if base_branch is None:
-        raise CommandException('No base branch argument is given')
-
+def request(repo=None):
     repo = get_repo(repo)
-
     try:
-        pull = _create_pull_request(repo, base_branch)
+        pull = _create_pull_request(repo)
     except GithubException as e:
         _handle_github_exception(e, 'create a pull request')
 
@@ -74,18 +71,30 @@ def request(base_branch=None, repo=None):
     print 'Pull request URL: %s' % pull.html_url
 
 
-def _create_pull_request(repo, base_branch):
-    origin_url = remote_origin_url(repo)
-    full_repo_name = origin_url.split(':')[1].split('.')[0]
-    cur_branch = current_branch(repo)
-    if cur_branch is base_branch:
-        raise CommandException("Unable to create a pull request from '%s' which is basing on the same branch." % base_branch)
-    return get_github(repo).get_repo(full_repo_name).create_pull(
-        title=repo.head.commit.summary,
-        body=repo.head.commit.message,
-        head=cur_branch,
-        base=base_branch
-    )
+def _create_pull_request(repo):
+    feature_config = feature.configuration(repo)
+    target_remote = feature_config.target_remote
+    working_remote = feature_config.working_remote
+    target_branch = feature_config.target_branch
+    full_repo_name = get_remote_url(repo, target_remote).split(':')[1].split('.')[0]
+    working_namespace = get_remote_url(repo, working_remote).split(':')[1].split('/')[0]
+    current_branch = get_current_branch(repo)
+
+    head = '%s:%s' % (working_namespace, current_branch)
+    if target_remote is working_remote:
+        if current_branch is target_branch:
+            raise CommandException("Unable to create a pull request from the same remote and branch.")
+        head = current_branch
+
+    pull_request = {
+        'title': repo.head.commit.summary,
+        'body': repo.head.commit.message,
+        'head': head,
+        'base': target_branch
+    }
+
+    logging.debug('Creating pull request with: %s' % pull_request)
+    return _get_github(repo).get_repo(full_repo_name).create_pull(**pull_request)
 
 
 def missingConfigurationException(item):
@@ -102,6 +111,6 @@ def _configuration(repo=None):
 
 command = AggregatedCommand('github', 'Integration with github.', [
     Command('authorize', 'Create authorization and retrieve github access token.', _authorize),
-    Command('request', 'Creates a pull request from current branch.', request, '<base branch>'),
+    Command('request', 'Creates a pull request from current branch.', request),
     configuration_command(_configuration, 'Configure github settings.')
 ])

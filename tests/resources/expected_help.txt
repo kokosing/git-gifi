@@ -5,7 +5,7 @@ Usage:
 Commands:
 github <subcommand>	-	Integration with github. See below subcommands:
 	authorize		-	Create authorization and retrieve github access token.
-	request <base branch>	-	Creates a pull request from current branch.
+	request		-	Creates a pull request from current branch.
 	configure <configuration level>	-	Configure github settings.
 help		-	Display this window.
 feature <subcommand>	-	Manages a feature branches. See below subcommands:
@@ -21,7 +21,7 @@ queue <subcommand>	-	Stash based commit queue. See below subcommands:
 	list		-	List commits in the queue.
 	pop		-	Pops a commit from the queue.
 version		-	Show version number.
-install		-	Install gifi as git bunch of aliases.
+install		-	Install gifi as a bunch of git aliases.
 slack <subcommand>	-	Integration with slack. See below subcommands:
 	notify <message>	-	Post a message on given channel.
 	configure <configuration level>	-	Configure slack settings.

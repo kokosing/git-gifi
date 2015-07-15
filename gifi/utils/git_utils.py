@@ -2,7 +2,7 @@ from gifi.command import CommandException
 from git import Repo, InvalidGitRepositoryError
 
 
-def current_branch(repo):
+def get_current_branch(repo):
     current_branch = repo.git.rev_parse('--abbrev-ref', 'HEAD')
     return current_branch
 
@@ -25,12 +25,12 @@ def get_repo(repo=None):
     return repo
 
 
-def remote_origin_url(repo=None):
+def get_remote_url(repo=None, remote='origin'):
     repo = get_repo(repo)
     config_reader = repo.config_reader()
-    origin_url = config_reader.get_value('remote "origin"', "url")
+    remote_url = config_reader.get_value('remote "%s"' % remote, "url")
     config_reader.release()
-    return origin_url
+    return remote_url
 
 
 def get_from_last_commit_message(repo, item_header):

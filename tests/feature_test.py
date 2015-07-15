@@ -1,5 +1,5 @@
 from gifi.feature import command as feature
-from gifi.utils.git_utils import current_branch
+from gifi.utils.git_utils import get_current_branch
 from tests.utils.git_test import AbstractGitReposTest
 
 
@@ -15,7 +15,7 @@ class FutureTest(AbstractGitReposTest):
         assert self.local_heads_count() == 2
         assert self.remote_files_count() == 2
         assert self.remote_heads_count() == 1
-        assert current_branch(self.local_repo) == 'feature_test'
+        assert get_current_branch(self.local_repo) == 'feature_test'
 
         self.commit_local_file('feature_test_file')
         feature('publish')

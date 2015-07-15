@@ -9,40 +9,11 @@ from gifi.main import command, _main
 
 
 def test_help():
-    expected_help = '''gifi <subcommand>\t-\tGit and github enhancements to git.
-Usage:
-\tgifi command [command arguments]
-
-Commands:
-github <subcommand>\t-\tIntegration with github. See below subcommands:
-\tauthorize\t-\tCreate authorization and retrieve github access token.
-\trequest <base branch>\t-\tCreates a pull request from current branch.
-\tconfigure <configuration level>\t-\tConfigure github settings.
-
-help\t-\tDisplay this window.
-feature <subcommand>\t-\tManages a feature branches. See below subcommands:
-\tstart <feature name>\t-\tCreates a new feature branch.
-\tfinish\t-\tCloses and pushes a feature to a target-remote/target-branch.
-\tconfigure <configuration level>\t-\tConfigure feature behaviour.
-\tpublish\t-\tPublishes a feature branch to review.
-\tdiscard\t-\tCloses a feature branch without a push to a target-remote/target-branch.
-
-queue <subcommand>\t-\tStash based commit queue. See below subcommands:
-\tpush\t-\tPushes a commit on the queue.
-\tpop-finish\t-\tIn case of conflict during 'pop', use this command once conflict is solved.
-\tlist\t-\tList commits in the queue.
-\tpop\t-\tPops a commit from the queue.
-
-version\t-\tShow version number.
-install\t-\tInstall gifi as git bunch of aliases.
-slack <subcommand>\t-\tIntegration with slack. See below subcommands:
-\tnotify <message>\t-\tPost a message on given channel.
-\tconfigure <configuration level>\t-\tConfigure slack settings.
-
-'''
+    with open('tests/resources/expected_help.txt', 'r') as f:
+        expected_help = f.readlines()
     actual_help = command('help')
 
-    diff = list(unified_diff(expected_help.splitlines(1), actual_help.splitlines(1)))
+    diff = list(unified_diff(expected_help, actual_help.splitlines(1)))
     pprint(diff)
     assert len(diff) == 0
 

@@ -35,7 +35,8 @@ class HelpGenerator(object):
                 help += ' See below subcommands:\n'
                 for subcommand in command.nested_commands():
                     help += '\t%s\n' % str(subcommand)
-            help += '\n'
+            else:
+                help += '\n'
 
         return help
 

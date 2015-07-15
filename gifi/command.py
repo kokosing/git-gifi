@@ -15,6 +15,8 @@ class Command(object):
         args = ''
         if self.args is not None:
             args = ' %s' % self.args
+        else:
+            args = '\t'
         return '%s%s\t-\t%s' % (self.name, args, self.description)
 
 

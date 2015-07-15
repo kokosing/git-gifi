@@ -5,8 +5,7 @@ from github import Github, GithubException
 from command import AggregatedCommand, Command, CommandException
 from github.MainClass import DEFAULT_BASE_URL
 from utils.configuration import Configuration, NOT_SET, configuration_command, REPOSITORY_CONFIG_LEVEL
-from utils.git_utils import get_repo, remote_origin_url, current_branch, get_from_last_commit_message
-import slack
+from utils.git_utils import get_repo, remote_origin_url, current_branch
 
 PULL_REQUEST_COMMIT_TAG = 'Pull request'
 
@@ -73,10 +72,6 @@ def request(base_branch=None, repo=None):
 
     repo.git.commit('--amend', '-m', '%s\n\n%s: %s' % (repo.head.commit.message, PULL_REQUEST_COMMIT_TAG, pull.html_url))
     print 'Pull request URL: %s' % pull.html_url
-
-    reviewers = get_from_last_commit_message(repo, 'Reviewers')
-    message = '%s Please review: %s' % (', '.join(map(lambda r: '<@%s>' % r, reviewers)), pull.html_url)
-    slack.notify(message)
 
 
 def _create_pull_request(repo, base_branch):

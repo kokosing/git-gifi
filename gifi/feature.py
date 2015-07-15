@@ -2,7 +2,6 @@ import logging
 import subprocess
 
 from git import GitCommandError
-
 import git_hub
 from utils import git_utils
 from utils.configuration import Configuration, configuration_command
@@ -56,6 +55,19 @@ def _publish():
     repo.git.push('-f', '-u', config.working_remote, 'HEAD:%s' % current_branch)
     if config.publish_with_pull_request:
         git_hub.request(config.target_branch, repo)
+        _ping(repo)
+
+
+def _ping(repo=None):
+    repo = get_repo()
+    reviewers = get_from_last_commit_message(repo, 'Reviewers')
+    reviewers = ', '.join(map(lambda r: '<@%s>' % r, reviewers))
+    pull_requests = _get_pull_requests(repo)
+    if len(pull_requests) > 0:
+        message = '%s: Please review: %s' % (reviewers, ','.join(pull_requests))
+        slack.notify(message)
+    else:
+        raise CommandException('No pull request URL in commit message, have you published your feature?')
 
 
 def _finish():
@@ -69,9 +81,13 @@ def _finish():
         raise CommandException('Rebase finished with an error, please fix it manually and then feature-finish once again.')
     repo.git.push(config.target_remote, 'HEAD:%s' % config.target_branch)
     _discard(repo)
-    pull_requests = get_from_last_commit_message(repo, PULL_REQUEST_COMMIT_TAG)
+    pull_requests = _get_pull_requests(repo)
     if len(pull_requests) > 0:
         slack.notify('%s merged.' % ', '.join(pull_requests))
+
+
+def _get_pull_requests(repo):
+    return get_from_last_commit_message(repo, PULL_REQUEST_COMMIT_TAG)
 
 
 def _discard(repo=None):
@@ -113,5 +129,6 @@ command = AggregatedCommand('feature', 'Manages a feature branches.', [
     Command('publish', 'Publishes a feature branch to review.', _publish),
     Command('finish', 'Closes and pushes a feature to a target-remote/target-branch.', _finish),
     Command('discard', 'Closes a feature branch without a push to a target-remote/target-branch.', _discard),
+    Command('ping', 'Send a notification to reviewers to ask them to do a review.', _ping),
     configuration_command(_configuration, 'Configure feature behaviour.')
 ])

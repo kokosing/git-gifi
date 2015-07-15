@@ -9,10 +9,11 @@ github <subcommand>	-	Integration with github. See below subcommands:
 	configure <configuration level>	-	Configure github settings.
 help		-	Display this window.
 feature <subcommand>	-	Manages a feature branches. See below subcommands:
-	start <feature name>	-	Creates a new feature branch.
 	finish		-	Closes and pushes a feature to a target-remote/target-branch.
 	configure <configuration level>	-	Configure feature behaviour.
+	ping		-	Send a notification to reviewers to ask them to do a review.
 	publish		-	Publishes a feature branch to review.
+	start <feature name>	-	Creates a new feature branch.
 	discard		-	Closes a feature branch without a push to a target-remote/target-branch.
 queue <subcommand>	-	Stash based commit queue. See below subcommands:
 	push		-	Pushes a commit on the queue.

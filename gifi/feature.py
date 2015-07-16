@@ -33,15 +33,16 @@ def _start(feature=None):
         base_remote = config.working_remote
     print 'Starting %s on %s/%s.' % (feature_branch, base_remote, base_branch)
 
-    _fetch(repo)
+    _fetch(repo, config)
     repo.create_head(feature_branch, '%s/%s' % (base_remote, base_branch))
     repo.heads[feature_branch].set_tracking_branch(repo.remotes[base_remote].refs[base_branch])
     repo.heads[feature_branch].checkout()
 
 
-def _fetch(repo):
+def _fetch(repo, config):
     try:
-        repo.git.fetch()
+        repo.git.fetch(config.target_remote)
+        repo.git.fetch(config.working_remote)
     except GitCommandError as e:
         logging.warn('Unable to fetch: %s' % e)
         print 'WARNING: Unable to fetch changes.'
@@ -74,7 +75,7 @@ def _finish():
     repo = get_repo()
     check_repo_is_clean(repo)
     config = configuration(repo)
-    repo.git.fetch()
+    _fetch(repo, config)
     interactive = '-i' if config.finish_with_rebase_interactive else ''
     rebase_status = subprocess.call('git rebase %s/%s %s' % (config.target_remote, config.target_branch, interactive), shell=True)
     if rebase_status is not 0:

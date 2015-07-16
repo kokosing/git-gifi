@@ -52,11 +52,31 @@ def _publish():
     repo = get_repo()
     check_repo_is_clean(repo)
     config = configuration(repo)
-    current_branch = _current_feature_branch(repo)
-    repo.git.push('-f', '-u', config.working_remote, 'HEAD:%s' % current_branch)
+    _push_working_branch(config, repo)
     if config.publish_with_pull_request:
         git_hub.request(repo)
         _ping(repo)
+
+
+def _push_working_branch(config, repo):
+    current_branch = _current_feature_branch(repo)
+    try:
+        repo.git.push('-u', config.working_remote, 'HEAD:%s' % current_branch)
+    except GitCommandError as e:
+        logging.warn('Unable push (publish) feature branch without force: %s' % e)
+        if ask('Unable to push your changes. Would you like to push with force?'):
+            repo.git.push('-f', '-u', config.working_remote, 'HEAD:%s' % current_branch)
+        else:
+            raise CommandException('Manual pull and rebase is required')
+
+
+def ask(question):
+    while True:
+        answer = raw_input('%s [yes|no]: ' % question).strip().lower()
+        if answer == 'yes':
+            return True
+        elif answer == 'no':
+            return False
 
 
 def _ping(repo=None):
@@ -75,13 +95,13 @@ def _finish():
     repo = get_repo()
     check_repo_is_clean(repo)
     config = configuration(repo)
-    current_branch = _current_feature_branch(repo)
+    _current_feature_branch(repo)
     _fetch(repo, config)
     interactive = '-i' if config.finish_with_rebase_interactive else ''
     rebase_status = subprocess.call('git rebase %s/%s %s' % (config.target_remote, config.target_branch, interactive), shell=True)
     if rebase_status is not 0:
         raise CommandException('Rebase finished with an error, please fix it manually and then feature-finish once again.')
-    repo.git.push('-f', '-u', config.working_remote, 'HEAD:%s' % current_branch)
+    _push_working_branch(config, repo)
     repo.git.push(config.target_remote, 'HEAD:%s' % config.target_branch)
     _discard(repo)
     pull_requests = _get_pull_requests(repo)

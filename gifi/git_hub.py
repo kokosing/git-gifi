@@ -40,15 +40,17 @@ def _handle_github_exception(e, event):
 def _map_github_error(error):
     if error['code'] == 'already_exists':
         return 'Authorization already exists, copy paste existing token and use it in configure command.'
+    elif error['code'] == 'custom':
+        return error['message']
     return error
 
 
 def _get_github(repo):
     config = _configuration(repo)
     if config.login is NOT_SET:
-        raise missingConfigurationException('login')
+        raise _missing_configuration_exception('login')
     if config.access_token is NOT_SET:
-        raise missingConfigurationException('access token')
+        raise _missing_configuration_exception('access token')
     return Github(config.access_token, base_url=(_get_github_url(repo)))
 
 
@@ -97,7 +99,7 @@ def _create_pull_request(repo):
     return _get_github(repo).get_repo(full_repo_name).create_pull(**pull_request)
 
 
-def missingConfigurationException(item):
+def _missing_configuration_exception(item):
     return CommandException('No github %s is set, please do configure or authorize github first.' % item)
 
 

@@ -126,7 +126,6 @@ def _discard(repo=None):
         logging.warn('Unable to drop remote feature branch: %s' % e)
         print 'WARNING: Unable to remove remote feature branch. Maybe it was not yet created?'
     repo.git.branch('-D', current_branch)
-    print 'Feature branch was discarded.'
 
 
 def configuration(repo=None):

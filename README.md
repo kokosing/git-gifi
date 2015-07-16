@@ -32,6 +32,8 @@ It is a simpliified version of [gitflow](https://www.atlassian.com/git/tutorials
 	# after code review
 	git feature-finish
 
+Note that in case you have no permission to push into *target-remote* and somebody merged your commit to *target-remote*, then you may want to use just *feature-discard* to clean your *working-remote*.
+
 ###Github
 To use github integration you need to authoriize first (obtain an access token):
 
@@ -44,6 +46,10 @@ Note that authorization information are stored per repository. Thanks to that it
 ##### Pull request
 With **git github-request** you can post a new pull request from current branch. It is required that branch is not 'master' and it is already pushed.
 In order to create a pull request during **git feature-publish**, please do **git feature-configure** first and enable pull request creation.
+
+#### Working with forked project
+In case you are working on a forked project (*you/Project*) and you want to create pull requests in project you forked from (*they/Project*). So to make **git-gifi** be able to create pull request you have to have both projects remotes added to your repositiory. For example *you/Project* on remote *you* and *the/Project* on remote *they*, then you need to run **feature-configure** and set, working-remote to you, target-remote to they, target-branch to the branch on they/Project where your changes are going to.
+Thanks to that created pull request will appear on *they/Project*. 
 
 ###Slack
 To use github integration you need to authenticate first obtain an access token for slack web api and the pass it to:

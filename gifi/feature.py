@@ -55,7 +55,7 @@ def _publish():
     current_branch = _current_feature_branch(repo)
     repo.git.push('-f', '-u', config.working_remote, 'HEAD:%s' % current_branch)
     if config.publish_with_pull_request:
-        git_hub.request(config.target_remote, config.target_branch, repo)
+        git_hub.request(repo)
         _ping(repo)
 
 

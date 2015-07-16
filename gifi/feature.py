@@ -75,11 +75,13 @@ def _finish():
     repo = get_repo()
     check_repo_is_clean(repo)
     config = configuration(repo)
+    current_branch = _current_feature_branch(repo)
     _fetch(repo, config)
     interactive = '-i' if config.finish_with_rebase_interactive else ''
     rebase_status = subprocess.call('git rebase %s/%s %s' % (config.target_remote, config.target_branch, interactive), shell=True)
     if rebase_status is not 0:
         raise CommandException('Rebase finished with an error, please fix it manually and then feature-finish once again.')
+    repo.git.push('-f', '-u', config.working_remote, 'HEAD:%s' % current_branch)
     repo.git.push(config.target_remote, 'HEAD:%s' % config.target_branch)
     _discard(repo)
     pull_requests = _get_pull_requests(repo)
@@ -99,7 +101,6 @@ def _discard(repo=None):
     repo.git.rebase('%s/%s' % (config.target_remote, config.target_branch))
     try:
         repo.git.commit('--amend', '-C', 'HEAD')
-        repo.git.push('-f', '-u', config.working_remote, 'HEAD:%s' % current_branch)
         repo.git.push(config.working_remote, ':%s' % current_branch)
     except GitCommandError as e:
         logging.warn('Unable to drop remote feature branch: %s' % e)

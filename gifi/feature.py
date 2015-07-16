@@ -97,7 +97,7 @@ def _discard(repo=None):
     repo.git.checkout(config.target_branch)
     repo.git.rebase('%s/%s' % (config.target_remote, config.target_branch))
     try:
-        repo.git.commit('--amend')
+        repo.git.commit('--amend', '-C', 'HEAD')
         repo.git.push('-f', '-u', config.working_remote, 'HEAD:%s' % current_branch)
         repo.git.push(config.working_remote, ':%s' % current_branch)
     except GitCommandError as e:

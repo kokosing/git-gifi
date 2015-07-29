@@ -60,12 +60,13 @@ def _publish():
 
 def _push_working_branch(config, repo):
     current_branch = _current_feature_branch(repo)
+    push_params = [config.working_remote, 'HEAD:%s' % current_branch]
     try:
-        repo.git.push('-u', config.working_remote, 'HEAD:%s' % current_branch)
+        repo.git.push('-u', *push_params)
     except GitCommandError as e:
         logging.warn('Unable push (publish) feature branch without force: %s' % e)
-        if ask('Unable to push your changes. Would you like to push with force?'):
-            repo.git.push('-f', '-u', config.working_remote, 'HEAD:%s' % current_branch)
+        if ask('Unable to push your changes ("git push -u %s %s") . Would you like to push with force?' % tuple(push_params)):
+            repo.git.push('-f', '-u', *push_params)
         else:
             raise CommandException('Manual pull and rebase is required')
 

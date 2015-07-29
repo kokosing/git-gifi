@@ -34,8 +34,9 @@ def get_remote_url(repo=None, remote='origin'):
 
 
 def get_from_last_commit_message(repo, item_header):
+    item_header = item_header + ":"
     commit_message_lines = repo.head.commit.message.split('\n')
-    lines_with_item = [e for e in commit_message_lines if e.startswith(item_header)]
-    items = map(lambda e: e.split('%s:' % item_header)[1].split(','), lines_with_item)
+    lines_with_item = [e for e in commit_message_lines if e.lower().startswith(item_header.lower())]
+    items = map(lambda e: e[len(item_header):].split(','), lines_with_item)
     items = [item.strip() for sub_list in items for item in sub_list]
     return items

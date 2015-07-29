@@ -55,9 +55,10 @@ def _get_github(repo):
 
 
 def _get_github_url(repo=None):
-    origin_url = get_remote_url(repo)
-    if 'github.com' not in origin_url:
-        return 'https://%s/api/v3' % origin_url.split('@')[1].split(':')[0]
+    feature_config = feature.configuration(repo)
+    target_remote_url = get_remote_url(feature_config.target_remote, repo)
+    if 'github.com' not in target_remote_url:
+        return 'https://%s/api/v3' % target_remote_url.split('@')[1].split(':')[0]
     else:
         return DEFAULT_BASE_URL
 
@@ -78,8 +79,8 @@ def _create_pull_request(repo):
     target_remote = feature_config.target_remote
     working_remote = feature_config.working_remote
     target_branch = feature_config.target_branch
-    full_repo_name = get_remote_url(repo, target_remote).split(':')[1].split('.')[0]
-    working_namespace = get_remote_url(repo, working_remote).split(':')[1].split('/')[0]
+    full_repo_name = get_remote_url(target_remote, repo).split(':')[1].split('.')[0]
+    working_namespace = get_remote_url(working_remote, repo).split(':')[1].split('/')[0]
     current_branch = get_current_branch(repo)
 
     head = '%s:%s' % (working_namespace, current_branch)

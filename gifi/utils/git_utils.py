@@ -25,7 +25,7 @@ def get_repo(repo=None):
     return repo
 
 
-def get_remote_url(repo=None, remote='origin'):
+def get_remote_url(remote, repo=None):
     repo = get_repo(repo)
     config_reader = repo.config_reader()
     remote_url = config_reader.get_value('remote "%s"' % remote, "url")

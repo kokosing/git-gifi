@@ -83,7 +83,7 @@ def ask(question):
 def _ping(repo=None):
     repo = get_repo(repo)
     reviewers = get_from_last_commit_message(repo, 'Reviewers')
-    reviewers = ', '.join(map(lambda r: '<@%s>' % r, reviewers))
+    reviewers = ', '.join(map(lambda r: '@%s' % r, reviewers))
     pull_requests = _get_pull_requests(repo)
     if len(pull_requests) > 0:
         message = '%s: Please review: %s' % (reviewers, ','.join(pull_requests))

@@ -23,7 +23,7 @@ def notify(message):
         raise missingConfigurationException('access-token')
     client = SlackClient(config.access_token)
     message = '%s %s' % (message, _SLACK_MESSAGE_SUFFIX)
-    client.api_call('chat.postMessage', channel='#%s' % config.notification_channel, text=message, as_user=True)
+    client.api_call('chat.postMessage', channel='#%s' % config.notification_channel, text=message, as_user=True, parse='full')
 
 
 def missingConfigurationException(item):

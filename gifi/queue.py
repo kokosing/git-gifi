@@ -1,5 +1,6 @@
 from command import Command, AggregatedCommand, CommandException
 from utils.git_utils import get_repo, check_repo_is_clean
+from git import GitCommandError
 import feature
 
 
@@ -8,7 +9,17 @@ def _pop():
     check_repo_is_clean(repo)
     if repo.git.stash('list') == '':
         raise CommandException('There is nothing in the queue to pop from.')
-    repo.git.stash('apply', '--index')
+    try:
+        repo.git.stash('apply', '--index')
+    except GitCommandError as e:
+        if 'Try without --index' in e.stderr:
+            try:
+                repo.git.stash('apply')
+            except GitCommandError:
+                raise CommandException('Unable to pop automatically. Resolve conflicts then run queue-pop-finish.')
+        else:
+            raise e
+
     _pop_finish()
 
 

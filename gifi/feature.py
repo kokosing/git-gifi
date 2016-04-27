@@ -117,16 +117,15 @@ def _get_pull_requests(repo):
 def _discard():
     repo = get_repo(repo)
     config = configuration(repo)
-    _fetch(repo, config)
     feature_branch = _current_feature_branch(repo)
     repo.git.checkout(config.target_branch)
-    repo.git.rebase('%s/%s' % (config.target_remote, config.target_branch))
     try:
         repo.git.push(config.working_remote, ':%s' % feature_branch)
     except GitCommandError as e:
         logging.warn('Unable to drop remote feature branch: %s' % e)
         print 'WARNING: Unable to remove remote feature branch. Maybe it was not yet created?'
     repo.git.branch('-D', feature_branch)
+    repo.git.rebase('%s/%s' % (config.target_remote, config.target_branch))
 
 
 def configuration(repo=None):

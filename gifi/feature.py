@@ -104,7 +104,7 @@ def _finish():
         raise CommandException('Rebase finished with an error, please fix it manually and then feature-finish once again.')
     _push_working_branch(config, repo)
     repo.git.push(config.target_remote, 'HEAD:%s' % config.target_branch)
-    _discard(repo)
+    _discard()
     pull_requests = _get_pull_requests(repo)
     if len(pull_requests) > 0:
         slack.notify('%s merged.' % ', '.join(pull_requests))
@@ -114,7 +114,7 @@ def _get_pull_requests(repo):
     return get_from_last_commit_message(repo, PULL_REQUEST_COMMIT_TAG)
 
 
-def _discard(repo=None):
+def _discard():
     repo = get_repo(repo)
     config = configuration(repo)
     _fetch(repo, config)

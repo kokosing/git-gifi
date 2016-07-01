@@ -115,7 +115,7 @@ def _get_pull_requests(repo):
 
 
 def _discard():
-    repo = get_repo(repo)
+    repo = get_repo()
     config = configuration(repo)
     feature_branch = _current_feature_branch(repo)
     repo.git.checkout(config.target_branch)
@@ -126,6 +126,7 @@ def _discard():
         print 'WARNING: Unable to remove remote feature branch. Maybe it was not yet created?'
     repo.git.branch('-D', feature_branch)
     repo.git.rebase('%s/%s' % (config.target_remote, config.target_branch))
+    repo.git.fetch('%s --prune' % config.working_remote)
 
 
 def configuration(repo=None):

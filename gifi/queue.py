@@ -18,7 +18,7 @@ def _pop():
             except GitCommandError:
                 raise CommandException('Unable to pop automatically. Resolve conflicts then run queue-pop-finish.')
         else:
-            raise e
+            raise CommandException('Unable to pop automatically. Resolve conflicts then run queue-pop-finish.')
 
     _pop_finish()
 

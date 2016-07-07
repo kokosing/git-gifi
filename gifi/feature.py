@@ -126,7 +126,7 @@ def _discard():
         print 'WARNING: Unable to remove remote feature branch. Maybe it was not yet created?'
     repo.git.branch('-D', feature_branch)
     repo.git.rebase('%s/%s' % (config.target_remote, config.target_branch))
-    repo.git.fetch('%s --prune' % config.working_remote)
+    repo.git.fetch('%s' % config.working_remote, '--prune')
 
 
 def configuration(repo=None):

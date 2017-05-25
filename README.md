@@ -5,12 +5,12 @@
 Git and github enhancements to git.
 
 ***
-##Requirmentes:
+## Requirmentes:
 
 -  git (tested with version 1.9.1)
 -  python 2.7
 
-##Installation
+## Installation
 
 In order to install git-gifi please do the following (usage of virutalevn is recommend):
 
@@ -18,11 +18,11 @@ In order to install git-gifi please do the following (usage of virutalevn is rec
 	# if you prefer to gifi via set of git aliases, then
 	gifi install
 
-##Usage
-###Queue
+## Usage
+### Queue
 Concept of queue comes from [Mercurial Queues](http://hgbook.red-bean.com/read/managing-change-with-mercurial-queues.html). However this implementation is much simplier (git stash based). You can push (with **gifi push**) your commit on the queue (into git stash) and then pop (with **git pop**) it from the queue to your workspace.
 
-###Feature
+### Feature
 It is a simpliified version of [gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow). It is well suited to the case where you and your team work always on the same branch called *master* (no *develop* branch). For each feature you create a *feature branch* wich then is merged into *master*. Releases are just tagged commits in *master*.
 
 	git feature-start new_feature
@@ -34,7 +34,7 @@ It is a simpliified version of [gitflow](https://www.atlassian.com/git/tutorials
 
 Note that in case you have no permission to push into *target-remote* and somebody merged your commit to *target-remote*, then you may want to use just *feature-discard* to clean your *working-remote*.
 
-###Github
+### Github
 To use github integration you need to authoriize first (obtain an access token):
 
 	git github-authorize
@@ -51,7 +51,7 @@ In order to create a pull request during **git feature-publish**, please do **gi
 In case you are working on a forked project (*you/Project*) and you want to create pull requests in project you forked from (*they/Project*). So to make **git-gifi** be able to create pull request you have to have both projects remotes added to your repositiory. For example *you/Project* on remote *you* and *the/Project* on remote *they*, then you need to run **feature-configure** and set, working-remote to you, target-remote to they, target-branch to the branch on they/Project where your changes are going to.
 Thanks to that created pull request will appear on *they/Project*. 
 
-###Slack
+### Slack
 To use github integration you need to authenticate first obtain an access token for slack web api and the pass it to:
 
 	git slack-configure

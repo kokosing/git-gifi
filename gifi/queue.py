@@ -35,7 +35,7 @@ def _push():
     repo = get_repo()
     check_repo_is_clean(repo)
     feature_config = feature.configuration(repo)
-    base = '%s/%s' % (feature_config.working_remote, feature_config.target_branch)
+    base = '%s/%s' % (feature_config.target_remote, feature_config.target_branch)
     if repo.head.commit == repo.commit(base):
         raise CommandException('You are currently at %s, there is nothing to push' % base)
     commit_message = repo.head.commit.message

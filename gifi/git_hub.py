@@ -70,7 +70,6 @@ def request(repo=None):
     except GithubException as e:
         _handle_github_exception(e, 'create a pull request')
 
-    repo.git.commit('--amend', '-m', '%s\n\n%s: %s' % (repo.head.commit.message, PULL_REQUEST_COMMIT_TAG, pull.html_url))
     print 'Pull request URL: %s' % pull.html_url
 
 

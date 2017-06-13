@@ -19,5 +19,7 @@ def parse_value(rawValue, destType):
             raise CommandException("Wrong value '%s' (with: %s) for '%s'" % (rawValue, type(rawValue), destType))
     elif destType is str:
         return rawValue
+    elif destType is unicode:
+        return rawValue
     else:
         raise CommandException('Unsupported type: %s' % destType)

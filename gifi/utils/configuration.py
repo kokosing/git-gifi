@@ -1,5 +1,5 @@
 from gifi.command import Command
-from gifi.utils.ui import ask
+from gifi.utils.ui import ask, parse_value
 
 _CONFIGURATION_PREFIX = 'gifi'
 
@@ -28,7 +28,7 @@ class Configuration(object):
         default = self._default(item)
         rawValue = config_reader.get_value(_CONFIGURATION_PREFIX, self._key(item), default)
         config_reader.release()
-        return self._parse_value(rawValue, type(default))
+        return parse_value(rawValue, type(default))
 
     def _default(self, item):
         default = self.configuration[item][0]

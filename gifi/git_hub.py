@@ -1,10 +1,11 @@
 import getpass
 import logging
-import feature
-
 from github import Github, GithubException
-from command import AggregatedCommand, Command, CommandException
 from github.MainClass import DEFAULT_BASE_URL
+
+import feature
+from command import AggregatedCommand, Command, CommandException
+from gifi.utils.ui import ask
 from utils.configuration import Configuration, NOT_SET, configuration_command, REPOSITORY_CONFIG_LEVEL
 from utils.git_utils import get_repo, get_remote_url, get_current_branch
 

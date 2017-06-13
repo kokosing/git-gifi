@@ -1,14 +1,14 @@
 import logging
 import subprocess
-
 from git import GitCommandError
+
 import git_hub
+import slack
+from command import AggregatedCommand, Command, CommandException
+from git_hub import PULL_REQUEST_COMMIT_TAG
 from utils import git_utils
 from utils.configuration import Configuration, configuration_command
-from command import AggregatedCommand, Command, CommandException
 from utils.git_utils import get_repo, check_repo_is_clean, get_from_last_commit_message
-from git_hub import PULL_REQUEST_COMMIT_TAG
-import slack
 
 _FEATURE_BRANCH_PREFIX = 'feature_'
 
@@ -55,7 +55,6 @@ def _publish():
     _push_working_branch(config, repo)
     if config.publish_with_pull_request:
         git_hub.request(repo)
-        _ping(repo)
 
 
 def _push_working_branch(config, repo):
@@ -78,18 +77,6 @@ def ask(question):
             return True
         elif answer == 'no':
             return False
-
-
-def _ping(repo=None):
-    repo = get_repo(repo)
-    reviewers = get_from_last_commit_message(repo, 'Reviewers')
-    reviewers = ', '.join(map(lambda r: '@%s' % r, reviewers))
-    pull_requests = _get_pull_requests(repo)
-    if len(pull_requests) > 0:
-        message = '%s: Please review: %s' % (reviewers, ','.join(pull_requests))
-        slack.notify(message)
-    else:
-        raise CommandException('No pull request URL in commit message, have you published your feature?')
 
 
 def _finish():
@@ -153,6 +140,5 @@ command = AggregatedCommand('feature', 'Manages a feature branches.', [
     Command('publish', 'Publishes a feature branch to review.', _publish),
     Command('finish', 'Closes and pushes a feature to a target-remote/target-branch.', _finish),
     Command('discard', 'Closes a feature branch without a push to a target-remote/target-branch.', _discard),
-    Command('ping', 'Send a notification to reviewers to ask them to do a review.', _ping),
     configuration_command(configuration, 'Configure feature behaviour.')
 ])

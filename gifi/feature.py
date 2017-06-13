@@ -61,7 +61,9 @@ def _push_working_branch(config, repo):
         repo.git.push('-u', *push_params)
     except GitCommandError as e:
         logging.warn('Unable push (publish) feature branch without force: %s' % e)
-        if ask('Unable to push your changes ("git push -u %s %s") . Would you like to push with force?' % tuple(push_params)):
+        message = 'Unable to push your changes ("git push -u %s %s"). Would you like to use force?'
+        question = message % tuple(push_params)
+        if ask(question):
             repo.git.push('-f', '-u', *push_params)
         else:
             raise CommandException('Manual pull and rebase is required')
@@ -83,9 +85,11 @@ def _finish():
     _current_feature_branch(repo)
     _fetch(repo, config)
     interactive = '-i' if config.finish_with_rebase_interactive else ''
-    rebase_status = subprocess.call('git rebase %s/%s %s' % (config.target_remote, config.target_branch, interactive), shell=True)
+    rebase_cmd = 'git rebase %s/%s %s' % (config.target_remote, config.target_branch, interactive)
+    rebase_status = subprocess.call(rebase_cmd, shell=True)
     if rebase_status is not 0:
-        raise CommandException('Rebase finished with an error, please fix it manually and then feature-finish once again.')
+        message = 'Rebase finished with an error, please fix it manually and then feature-finish once again.'
+        raise CommandException(message)
     _push_working_branch(config, repo)
     repo.git.push(config.target_remote, 'HEAD:%s' % config.target_branch)
     _discard()

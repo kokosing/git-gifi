@@ -20,6 +20,7 @@ class NoseTestCommand(TestCommand):
         import nose
         nose.run_exit(argv=['nosetests'] + self.nose_args.split(','))
 
+
 requirements = [
     'PyGithub==1.25.2',
     'GitPython==1.0.1',

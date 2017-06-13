@@ -56,5 +56,10 @@ class Configuration(object):
             value = ask("%s - %s" % (key, self.description(key)), value)
             self.set(key, value, config_level)
 
+
 def configuration_command(configuration, description):
-    return Command('configure', description, lambda config_level=REPOSITORY_CONFIG_LEVEL: configuration().configure(config_level), '<configuration level>')
+    return Command(
+        'configure',
+        description,
+        lambda config_level=REPOSITORY_CONFIG_LEVEL: configuration().configure(config_level),
+        '<configuration level>')

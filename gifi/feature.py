@@ -28,9 +28,6 @@ def _start(feature=None):
 
     base_branch = config.target_branch
     base_remote = config.target_remote
-    if config.start_on_current_branch:
-        base_branch = git_utils.get_current_branch(repo)
-        base_remote = config.working_remote
     print 'Starting %s on %s/%s.' % (feature_branch, base_remote, base_branch)
 
     _fetch(repo, config)
@@ -121,7 +118,6 @@ def configuration(repo=None):
     return Configuration(repo, 'feature', {
         'finish-with-rebase-interactive': (False, 'Should do a rebase interactive during feature finishing'),
         'publish-with-pull-request': (False, 'Should create a pull request during feature publishing'),
-        'start-on-current-branch': (False, 'Should start a feature branch on current branch, by default it starts on target-remote/target-branch'),
         'working-remote': ('origin', 'On which remote you are working at'),
         'target-remote': ('origin', 'To which remote your work is going to be eventually pushed'),
         'target-branch': ('master', 'Branch on target-remote on which your feature is basing')

@@ -1,4 +1,5 @@
-from gifi.command import CommandException, Command
+from gifi.command import Command
+from gifi.utils.ui import ask
 
 _CONFIGURATION_PREFIX = 'gifi'
 
@@ -47,29 +48,13 @@ class Configuration(object):
     def _key(self, item):
         return '%s-%s' % (self.prefix, item)
 
-    def _parse_value(self, rawValue, destType):
-        rawValue = str(rawValue)
-        if destType is bool:
-            if rawValue in ['True', 'true', 'yes', '1']:
-                return True
-            elif rawValue in ['False', 'false', 'no', '0']:
-                return False
-            else:
-                raise CommandException("Wrong value '%s' (with: %s) for '%s'" % (rawValue, type(rawValue), destType))
-        elif destType is str:
-            return rawValue
-        else:
-            raise CommandException('Unsupported type: %s' % destType)
-
     def configure(self, config_level=REPOSITORY_CONFIG_LEVEL, keys=None):
         if keys is None:
             keys = self.list()
         for key in keys:
-            current_value = self[key]
-            new_value = raw_input("%s - %s (%s): " % (key, self.description(key), current_value))
-            if new_value is not '':
-                self.set(key, self._parse_value(new_value, type(current_value)), config_level)
-
+            value = self[key]
+            value = ask("%s - %s" % (key, self.description(key)), value)
+            self.set(key, value, config_level)
 
 def configuration_command(configuration, description):
     return Command('configure', description, lambda config_level=REPOSITORY_CONFIG_LEVEL: configuration().configure(config_level), '<configuration level>')

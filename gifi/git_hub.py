@@ -88,9 +88,14 @@ def _create_pull_request(repo):
             raise CommandException("Unable to create a pull request from the same remote and branch.")
         head = current_branch
 
+    default_title = repo.head.commit.summary
+    title = title = ask("Title: ", default_title)
+    body = ""
+    if title is default_title:
+        body = repo.head.commit.message
     pull_request = {
-        'title': repo.head.commit.summary,
-        'body': repo.head.commit.message,
+        'title': title,
+        'body': body,
         'head': head,
         'base': target_branch
     }

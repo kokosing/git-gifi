@@ -3,6 +3,7 @@ import logging
 
 from utils import git_utils
 from command import Command, AggregatedCommand, UnknownCommandException, CommandException
+import epic
 import feature
 import pkg_resources
 import queue
@@ -12,6 +13,7 @@ import slack
 logging.basicConfig(filename='/tmp/gifi.log', level=logging.DEBUG)
 
 command = AggregatedCommand('gifi', 'Git and github enhancements to git.', [
+    epic.command,
     feature.command,
     queue.command,
     git_hub.command,

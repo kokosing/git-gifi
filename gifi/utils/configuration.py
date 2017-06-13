@@ -31,8 +31,7 @@ class Configuration(object):
         return parse_value(rawValue, type(default))
 
     def _default(self, item):
-        default = self.configuration[item][0]
-        return default
+        return self.configuration[item][0]
 
     def list(self):
         return self.configuration.keys()

@@ -56,8 +56,7 @@ def _get_github(repo):
 
 
 def _get_github_url(repo=None):
-    feature_config = feature.configuration(repo)
-    target_remote_url = get_remote_url(feature_config.target_remote, repo)
+    target_remote_url = get_remote_url(feature.current(repo)[0], repo)
     if 'github.com' not in target_remote_url:
         return 'https://%s/api/v3' % target_remote_url.split('@')[1].split(':')[0]
     else:
@@ -76,9 +75,8 @@ def request(repo=None):
 
 def _create_pull_request(repo):
     feature_config = feature.configuration(repo)
-    target_remote = feature_config.target_remote
+    (target_remote, target_branch, feature_name) = feature.current(repo)
     working_remote = feature_config.working_remote
-    target_branch = feature_config.target_branch
     full_repo_name = get_remote_url(target_remote, repo).split(':')[1].split('.')[0]
     working_namespace = get_remote_url(working_remote, repo).split(':')[1].split('/')[0]
     current_branch = get_current_branch(repo)
@@ -90,7 +88,7 @@ def _create_pull_request(repo):
         head = current_branch
 
     default_title = repo.head.commit.summary
-    title = title = ask("Title: ", default_title)
+    title = ask("Title: ", default_title)
     body = ""
     if title is default_title:
         body = repo.head.commit.message

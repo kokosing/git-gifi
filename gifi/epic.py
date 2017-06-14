@@ -48,10 +48,18 @@ def _rm():
     config.set('all', ','.join(epics))
 
 
-def _current():
+def _print_current():
+    print '/'.join(current())
+
+
+def current():
     repo = get_repo()
     config = configuration(repo)
-    print config.current
+    epic = config.current
+    epic_parts = epic.split('/')
+    remote = epic_parts[0]
+    branch = '/'.join(epic_parts[1:])
+    return (remote, branch)
 
 
 def configuration(repo=None):
@@ -66,6 +74,6 @@ command = AggregatedCommand('epic', 'Manages a epic branches.', [
     Command('list', 'List all epic branches.', _print_list),
     Command('select', 'Select your current epic branch.', _select),
     Command('rm', 'Remove epic branch.', _rm),
-    Command('current', 'Print current epic branch.', _current),
+    Command('current', 'Print current epic branch.', _print_current),
     Command('add', 'Add new epic branch.', _add, '<remote/branch>')
 ])

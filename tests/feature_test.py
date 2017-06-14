@@ -15,7 +15,7 @@ class FutureTest(AbstractGitReposTest):
         assert self.local_heads_count() == 2
         assert self.remote_files_count() == 2
         assert self.remote_heads_count() == 1
-        assert get_current_branch(self.local_repo) == 'feature_test'
+        assert get_current_branch(self.local_repo) == 'origin/master/test'
 
         self.commit_local_file('feature_test_file')
         feature('publish')
@@ -23,7 +23,7 @@ class FutureTest(AbstractGitReposTest):
         assert self.local_heads_count() == 2
         assert self.remote_files_count() == 2
         assert self.remote_heads_count() == 2
-        assert self.remote_files_count('feature_test') == 3
+        assert self.remote_files_count('origin/master/test') == 3
 
         feature('finish')
         assert self.local_files_count() == 3

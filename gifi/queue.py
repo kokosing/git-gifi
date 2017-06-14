@@ -1,7 +1,7 @@
 from command import Command, AggregatedCommand, CommandException
 from utils.git_utils import get_repo, check_repo_is_clean
 from git import GitCommandError
-import feature
+import epic
 
 
 def _pop():
@@ -34,8 +34,8 @@ def _pop_finish(repo=None):
 def _push():
     repo = get_repo()
     check_repo_is_clean(repo)
-    feature_config = feature.configuration(repo)
-    base = '%s/%s' % (feature_config.target_remote, feature_config.target_branch)
+    (target_remote, target_branch) = epic.current()
+    base = '%s/%s' % (target_remote, target_branch)
     if repo.head.commit == repo.commit(base):
         raise CommandException('You are currently at %s, there is nothing to push' % base)
     commit_message = repo.head.commit.message

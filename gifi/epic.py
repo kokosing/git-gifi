@@ -1,12 +1,13 @@
 from command import AggregatedCommand, Command, CommandException
 from utils.configuration import Configuration
 from utils.git_utils import get_repo
-from ui import ask
+from utils.ui import ask
 
 
-def _print_list(repo=None):
+def _print_list(repo=None, config=None):
     repo = get_repo(repo)
-    config = configuration(repo)
+    if config is None:
+        config = configuration(repo)
 
     print 'List of epics:'
     i = 0
@@ -30,10 +31,28 @@ def _add(epic):
 
 
 def _select():
-    pass
+    repo = get_repo()
+    config = configuration(repo)
+    _print_list(repo, config)
+    answer = ask('Which epic would you like to select', 1)
+    config.set('current', _list_all(config)[answer - 1])
+
 
 def _rm():
-    pass
+    repo = get_repo()
+    config = configuration(repo)
+    _print_list(repo, config)
+    answer = ask('Which epic would you like to remove', 1)
+    epics = _list_all(config)
+    del epics[answer - 1]
+    config.set('all', ','.join(epics))
+
+
+def _current():
+    repo = get_repo()
+    config = configuration(repo)
+    print config.current
+
 
 def configuration(repo=None):
     repo = get_repo(repo)
@@ -47,5 +66,6 @@ command = AggregatedCommand('epic', 'Manages a epic branches.', [
     Command('list', 'List all epic branches.', _print_list),
     Command('select', 'Select your current epic branch.', _select),
     Command('rm', 'Remove epic branch.', _rm),
+    Command('current', 'Print current epic branch.', _current),
     Command('add', 'Add new epic branch.', _add, '<remote/branch>')
 ])

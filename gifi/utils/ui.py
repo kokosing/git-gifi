@@ -21,5 +21,7 @@ def parse_value(rawValue, destType):
         return rawValue
     elif destType is unicode:
         return rawValue
+    elif destType is int:
+        return int(rawValue)
     else:
         raise CommandException('Unsupported type: %s' % destType)

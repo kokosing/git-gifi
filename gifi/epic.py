@@ -1,3 +1,4 @@
+import feature
 from command import AggregatedCommand, Command, CommandException
 from utils.configuration import Configuration
 from utils.git_utils import get_repo
@@ -30,12 +31,12 @@ def _add(epic):
     config.set('all', '%s,%s' % (config.all, epic))
 
 
-def _select():
+def select():
     repo = get_repo()
     config = configuration(repo)
     _print_list(repo, config)
     answer = ask('Which epic would you like to select', 1)
-    config.set('current', _list_all(config)[answer - 1])
+    return _list_all(config)[answer - 1]
 
 
 def _rm():
@@ -54,25 +55,19 @@ def _print_current():
 
 def current():
     repo = get_repo()
-    config = configuration(repo)
-    epic = config.current
-    epic_parts = epic.split('/')
-    remote = epic_parts[0]
-    branch = '/'.join(epic_parts[1:])
-    return (remote, branch)
+    f = feature.current(repo)
+    return (f.target_remote, f.target_branch)
 
 
 def configuration(repo=None):
     repo = get_repo(repo)
     return Configuration(repo, 'epic', {
-        'all': ('origin/master', 'A list of coma separated epic remote/branch`es'),
-        'current': ('origin/master', 'Current epci remote/branch')
+        'all': ('origin/master', 'A list of coma separated epic remote/branch`es')
     })
 
 
 command = AggregatedCommand('epic', 'Manages a epic branches.', [
     Command('list', 'List all epic branches.', _print_list),
-    Command('select', 'Select your current epic branch.', _select),
     Command('rm', 'Remove epic branch.', _rm),
     Command('current', 'Print current epic branch.', _print_current),
     Command('add', 'Add new epic branch.', _add, '<remote/branch>')

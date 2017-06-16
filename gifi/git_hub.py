@@ -74,8 +74,8 @@ def request(repo=None):
 
 
 def _create_pull_request(repo):
-    feature_config = f.configuration(repo)
-    f = f.current(repo)
+    feature_config = feature.configuration(repo)
+    f = feature.current(repo)
     working_remote = feature_config.working_remote
     full_repo_name = get_remote_url(f.target_remote, repo).split(':')[1].split('.')[0]
     working_namespace = get_remote_url(working_remote, repo).split(':')[1].split('/')[0]

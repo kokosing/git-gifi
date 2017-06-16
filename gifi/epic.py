@@ -55,8 +55,11 @@ def _print_current():
 
 def current():
     repo = get_repo()
-    f = feature.current(repo)
-    return (f.target_remote, f.target_branch)
+    if feature.is_on_feature_branch(repo):
+        f = feature.current(repo)
+        return (f.target_remote, f.target_branch)
+    else:
+        return ('origin', 'master')
 
 
 def configuration(repo=None):

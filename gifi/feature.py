@@ -141,6 +141,11 @@ def configuration(repo=None):
     })
 
 
+def is_on_feature_branch(repo):
+    current_branch = git_utils.get_current_branch(repo)
+    return current_branch.count('/') > 1
+
+
 def _current_feature_branch(repo):
     current_branch = git_utils.get_current_branch(repo)
     if not current_branch.count('/') > 1:
@@ -149,7 +154,7 @@ def _current_feature_branch(repo):
 
 
 def current(repo):
-    return Feature.parse(_current_feature_branch(repo).split('/'))
+    return Feature.parse(_current_feature_branch(repo))
 
 
 command = AggregatedCommand('feature', 'Manages a feature branches.', [

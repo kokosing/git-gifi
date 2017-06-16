@@ -12,6 +12,24 @@ from utils.configuration import Configuration, configuration_command
 from utils.git_utils import get_repo, check_repo_is_clean, get_from_last_commit_message
 
 
+class Feature:
+    @staticmethod
+    def parse(branch):
+        parts = branch.split('/')
+        target_remote = parts[0]
+        target_branch = '/'.join(parts[1:-1])
+        feature = parts[-1]
+        return Feature(target_remote, target_branch, feature)
+
+    def __init__(self, target_remote, target_branch, name):
+        self.target_remote = target_remote
+        self.target_branch = target_branch
+        self.name = name
+
+    def to_branch_name(self):
+        return "%s/%s/%s" % (self.target_remote, self.target_branch, self.name)
+
+
 def _start(feature=None):
     repo = get_repo()
 
@@ -79,16 +97,16 @@ def _finish():
     check_repo_is_clean(repo)
     config = configuration(repo)
     _current_feature_branch(repo)
-    (target_remote, target_branch, feature_name) = current(repo)
-    _fetch(repo, target_remote)
+    feature = current(repo)
+    _fetch(repo, feature.target_remote)
     interactive = '-i' if config.finish_with_rebase_interactive else ''
-    rebase_cmd = 'git rebase %s/%s %s' % (target_remote, target_branch, interactive)
+    rebase_cmd = 'git rebase %s/%s %s' % (feature.target_remote, feature.target_branch, interactive)
     rebase_status = subprocess.call(rebase_cmd, shell=True)
     if rebase_status is not 0:
         message = 'Rebase finished with an error, please fix it manually and then feature-finish once again.'
         raise CommandException(message)
     _push_working_branch(config, repo)
-    repo.git.push(target_remote, 'HEAD:%s' % target_branch)
+    repo.git.push(feature.target_remote, 'HEAD:%s' % feature.target_branch)
     _discard()
     pull_requests = _get_pull_requests(repo)
     if len(pull_requests) > 0:
@@ -102,16 +120,15 @@ def _get_pull_requests(repo):
 def _discard():
     repo = get_repo()
     config = configuration(repo)
-    feature_branch = _current_feature_branch(repo)
-    (target_remote, target_branch, feature_name) = current(repo)
-    repo.git.checkout(target_branch)
+    feature = current(repo)
+    repo.git.checkout(feature.target_branch)
     try:
-        repo.git.push(config.working_remote, ':%s' % feature_branch)
+        repo.git.push(config.working_remote, ':%s' % feature.to_branch_name())
     except GitCommandError as e:
         logging.warn('Unable to drop remote feature branch: %s' % e)
         print 'WARNING: Unable to remove remote feature branch. Maybe it was not yet created?'
-    repo.git.branch('-D', feature_branch)
-    repo.git.rebase('%s/%s' % (target_remote, target_branch))
+    repo.git.branch('-D', feature.to_branch_name())
+    repo.git.rebase('%s/%s' % (feature.target_remote, feature.target_branch))
     repo.git.fetch('%s' % config.working_remote, '--prune')
 
 
@@ -132,11 +149,7 @@ def _current_feature_branch(repo):
 
 
 def current(repo):
-    parts = _current_feature_branch(repo).split('/')
-    target_remote = parts[0]
-    target_branch = '/'.join(parts[1:-1])
-    feature = parts[-1]
-    return (target_remote, target_branch, feature)
+    return Feature.parse(_current_feature_branch(repo).split('/'))
 
 
 command = AggregatedCommand('feature', 'Manages a feature branches.', [

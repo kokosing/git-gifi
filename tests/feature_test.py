@@ -10,7 +10,7 @@ class FutureTest(AbstractGitReposTest):
         assert self.remote_files_count() == 2
         assert self.remote_heads_count() == 1
 
-        feature('start', 'test')
+        feature('start', 'test', 'origin/master')
         assert self.local_files_count() == 2
         assert self.local_heads_count() == 2
         assert self.remote_files_count() == 2

@@ -5,6 +5,22 @@ from utils.git_utils import get_repo
 from utils.ui import ask
 
 
+class Epic:
+    @staticmethod
+    def parse(branch):
+        parts = branch.split('/')
+        remote = parts[0]
+        branch = '/'.join(parts[1:])
+        return Epic(remote, branch)
+
+    def __init__(self, remote, branch):
+        self.remote = remote
+        self.branch = branch
+
+    def to_string(self):
+        return "%s/%s" % (self.remote, self.branch)
+
+
 def _print_list(repo=None, config=None):
     repo = get_repo(repo)
     if config is None:
@@ -34,9 +50,12 @@ def _add(epic):
 def select():
     repo = get_repo()
     config = configuration(repo)
+    all = _list_all(config)
+    if len(all) == 1:
+        return Epic.parse(all[1])
     _print_list(repo, config)
     answer = ask('Which epic would you like to select', 1)
-    return _list_all(config)[answer - 1]
+    return Epic.parse(all[answer - 1])
 
 
 def _rm():

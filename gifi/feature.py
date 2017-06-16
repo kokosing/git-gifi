@@ -30,24 +30,28 @@ class Feature:
         return "%s/%s/%s" % (self.target_remote, self.target_branch, self.name)
 
 
-def _start(feature=None):
+def _start(feature=None, e=None):
     repo = get_repo()
 
     if feature is None:
         raise CommandException('No feature name given')
 
-    (target_remote, target_branch) = epic.current()
-    feature_branch = '%s/%s/%s' % (target_remote, target_branch, feature)
+    if e is None:
+        e = epic.select()
+    else:
+        e = epic.Epic.parse(e)
+    feature_branch = '%s/%s' % (e.to_string(), feature)
+
     git_utils.check_repo_is_clean(repo)
 
     if map(lambda head: head.name, repo.heads).count(feature_branch) != 0:
         raise CommandException("Feature branch '%s' already exists." % feature_branch)
 
-    print 'Starting %s on %s/%s.' % (feature_branch, target_remote, target_branch)
+    print 'Starting %s on %s.' % (feature_branch, e.to_string())
 
-    _fetch(repo, target_remote)
-    repo.create_head(feature_branch, '%s/%s' % (target_remote, target_branch))
-    repo.heads[feature_branch].set_tracking_branch(repo.remotes[target_remote].refs[target_branch])
+    _fetch(repo, e.remote)
+    repo.create_head(feature_branch, e.to_string())
+    repo.heads[feature_branch].set_tracking_branch(repo.remotes[e.remote].refs[e.branch])
     repo.heads[feature_branch].checkout()
 
 
@@ -97,20 +101,28 @@ def _finish():
     check_repo_is_clean(repo)
     config = configuration(repo)
     _current_feature_branch(repo)
+    _rebase(repo, config)
     feature = current(repo)
-    _fetch(repo, feature.target_remote)
-    interactive = '-i' if config.finish_with_rebase_interactive else ''
-    rebase_cmd = 'git rebase %s/%s %s' % (feature.target_remote, feature.target_branch, interactive)
-    rebase_status = subprocess.call(rebase_cmd, shell=True)
-    if rebase_status is not 0:
-        message = 'Rebase finished with an error, please fix it manually and then feature-finish once again.'
-        raise CommandException(message)
     _push_working_branch(config, repo)
     repo.git.push(feature.target_remote, 'HEAD:%s' % feature.target_branch)
     _discard()
     pull_requests = _get_pull_requests(repo)
     if len(pull_requests) > 0:
         slack.notify('%s merged.' % ', '.join(pull_requests))
+
+
+def _rebase(repo=None, config=None):
+    repo = get_repo(repo)
+    if config is None:
+        config = configuration(repo)
+    feature = current(repo)
+    _fetch(repo, feature.target_remote)
+    interactive = '-i' if config.finish_with_rebase_interactive else ''
+    rebase_cmd = 'git rebase %s/%s %s' % (feature.target_remote, feature.target_branch, interactive)
+    rebase_status = subprocess.call(rebase_cmd, shell=True)
+    if rebase_status is not 0:
+        message = 'Rebase finished with an error, please fix it manually and then use "git rebase --continue"'
+        raise CommandException(message)
 
 
 def _get_pull_requests(repo):
@@ -162,5 +174,6 @@ command = AggregatedCommand('feature', 'Manages a feature branches.', [
     Command('publish', 'Publishes a feature branch to review.', _publish),
     Command('finish', 'Closes and pushes a feature to a feature epic branch.', _finish),
     Command('discard', 'Closes a feature branch without a push.', _discard),
+    Command('rebase', 'Rebases current feature on recent epic.', _rebase),
     configuration_command(configuration, 'Configure feature behaviour.')
 ])

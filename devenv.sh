@@ -50,8 +50,6 @@ function release() {
   rm -rf dist
   build
   $SETUP register
-  $SETUP bdist_wheel
-  $SETUP bdist_wheel --universal
   $SETUP sdist
   twine upload dist/*
   NEXT_VERSION=$(echo $VERSION + 1 | bc)

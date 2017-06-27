@@ -52,7 +52,7 @@ def select():
     config = configuration(repo)
     all = _list_all(config)
     if len(all) == 1:
-        return Epic.parse(all[1])
+        return Epic.parse(all[0])
     _print_list(repo, config)
     answer = ask('Which epic would you like to select', 1)
     return Epic.parse(all[answer - 1])

@@ -66,11 +66,9 @@ def _get_github_url(repo=None):
 def request(repo=None):
     repo = get_repo(repo)
     try:
-        pull = _create_pull_request(repo)
+        _create_pull_request(repo)
     except GithubException as e:
         _handle_github_exception(e, 'create a pull request')
-
-    print 'Pull request URL: %s' % pull.html_url
 
 
 def _create_pull_request(repo):
@@ -87,20 +85,29 @@ def _create_pull_request(repo):
             raise CommandException("Unable to create a pull request from the same remote and branch.")
         head = current_branch
 
+    github = _get_github(repo).get_repo(full_repo_name)
+    pull_requests = github.get_pulls('open')
+    for pull_request in pull_requests:
+        html_url = pull_request.html_url
+        if head == pull_request.head.label:
+            print "Pull request was updated, see: %s" % html_url
+            return
+
     default_title = repo.head.commit.summary
     title = ask("Title: ", default_title)
     body = ""
     if title is default_title:
         body = repo.head.commit.message
-    pull_request = {
+    pull_request_parameters = {
         'title': title,
         'body': body,
         'head': head,
         'base': f.target_branch
     }
 
-    logging.debug('Creating pull request with: %s' % pull_request)
-    return _get_github(repo).get_repo(full_repo_name).create_pull(**pull_request)
+    logging.debug('Creating pull request with: %s' % pull_request_parameters)
+    pull_request = github.create_pull(**pull_request_parameters)
+    print 'Pull request URL: %s' % pull_request.html_url
 
 
 def _missing_configuration_exception(item):

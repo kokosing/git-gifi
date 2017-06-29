@@ -90,7 +90,7 @@ def _create_pull_request(repo):
     for pull_request in pull_requests:
         html_url = pull_request.html_url
         if head == pull_request.head.label:
-            print "Pull request was updated, see: %s" % html_url
+            print "Pull request is already created, see: %s" % html_url
             return
 
     default_title = repo.head.commit.summary

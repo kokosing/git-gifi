@@ -23,7 +23,7 @@ class NoseTestCommand(TestCommand):
 
 requirements = [
     'PyGithub==1.25.2',
-    'GitPython==1.0.1',
+    'GitPython==2.1.7',
     'slackclient==0.15'
 ]
 

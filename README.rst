@@ -94,5 +94,16 @@ work with, then every time you do **git feature-start**, you will be asked to se
 (remote/branch) on which your new feature will based on and against which you will create a pull
 request.
 
+::
+
+    git epic-add origin/release-1.x
+    git feature-start new_feature
+    git add new_feature.code
+    git commit  -m 'new feature commit message'
+    git feature-publish
+    # after code review
+    git feature-finish
+
+
 .. |travis| image:: https://api.travis-ci.org/kokosing/git-gifi.svg
    :target: https://travis-ci.org/kokosing/git-gifi/

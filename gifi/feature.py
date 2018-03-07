@@ -1,5 +1,6 @@
 import logging
 import subprocess
+import re
 from git import GitCommandError
 
 import epic
@@ -40,12 +41,23 @@ def _start(feature=None, e=None):
         e = epic.select()
     else:
         e = epic.Epic.parse(e)
-    feature_branch = '%s/%s' % (e.to_string(), feature)
+
+    if len([head for head in repo.heads if re.match(r'%s.*%s' % (e.to_string(), feature), head.name)]) != 0:
+        raise CommandException("Feature branch '%s' already exists on %s." % (feature, e.to_string()))
+
+    numbered_epic_features = map(
+        lambda head: head.name.replace(e.to_string() + '/', ''),
+        [head for head in repo.heads if re.match(r'%s/[0-9].*' % e.to_string(), head.name)])
+    feature_id = 1
+    if numbered_epic_features:
+        feature_id = 1 + max(map(
+            lambda epic_feature: int('0' + re.sub('[^0-9]', '', epic_feature)),
+            numbered_epic_features))
+
+    feature_branch = '%s/%03d_%s' % (e.to_string(), feature_id, feature)
 
     git_utils.check_repo_is_clean(repo)
 
-    if map(lambda head: head.name, repo.heads).count(feature_branch) != 0:
-        raise CommandException("Feature branch '%s' already exists." % feature_branch)
 
     print 'Starting %s' % feature_branch
 

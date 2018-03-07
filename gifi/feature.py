@@ -47,7 +47,7 @@ def _start(feature=None, e=None):
     if map(lambda head: head.name, repo.heads).count(feature_branch) != 0:
         raise CommandException("Feature branch '%s' already exists." % feature_branch)
 
-    print 'Starting %s on %s.' % (feature_branch, e.to_string())
+    print 'Starting %s' % feature_branch
 
     _fetch(repo, e.remote)
     repo.create_head(feature_branch, e.to_string())

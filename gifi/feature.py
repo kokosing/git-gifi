@@ -51,7 +51,7 @@ def _start(feature=None, e=None):
     feature_id = 1
     if numbered_epic_features:
         feature_id = 1 + max(map(
-            lambda epic_feature: int('0' + re.sub('[^0-9]', '', epic_feature)),
+            lambda epic_feature: int('0' + re.sub('_.*', '', epic_feature)),
             numbered_epic_features))
 
     feature_branch = '%s/%03d_%s' % (e.to_string(), feature_id, feature)

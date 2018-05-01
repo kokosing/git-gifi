@@ -42,9 +42,6 @@ def _start(feature=None, e=None):
     else:
         e = epic.Epic.parse(e)
 
-    if len([head for head in repo.heads if re.match(r'%s.*%s' % (e.to_string(), feature), head.name)]) != 0:
-        raise CommandException("Feature branch '%s' already exists on %s." % (feature, e.to_string()))
-
     numbered_epic_features = map(
         lambda head: head.name.replace(e.to_string() + '/', ''),
         [head for head in repo.heads if re.match(r'%s/[0-9].*' % e.to_string(), head.name)])

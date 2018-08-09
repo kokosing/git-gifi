@@ -34,9 +34,6 @@ class Feature:
 def _start(feature=None, e=None):
     repo = get_repo()
 
-    if feature is None:
-        raise CommandException('No feature name given')
-
     if e is None:
         e = epic.select()
     else:
@@ -51,10 +48,11 @@ def _start(feature=None, e=None):
             lambda epic_feature: int('0' + re.sub('_.*', '', epic_feature)),
             numbered_epic_features))
 
-    feature_branch = '%s/%03d_%s' % (e.to_string(), feature_id, feature)
+    feature_branch = '%s/%03d' % (e.to_string(), feature_id)
+    if feature:
+        feature_branch = '%s_%s' % (feature_branch, feature)
 
     git_utils.check_repo_is_clean(repo)
-
 
     print 'Starting %s' % feature_branch
 

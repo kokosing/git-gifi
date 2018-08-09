@@ -140,6 +140,11 @@ def _discard():
     repo = get_repo()
     config = configuration(repo)
     feature = current(repo)
+    if repo.is_dirty():
+        if ask("There are uncommitted changes, would you like to remove them"):
+            repo.git.reset('--hard', 'HEAD')
+        else:
+            return
     repo.git.checkout(feature.target_branch)
     try:
         repo.git.push(config.working_remote, ':%s' % feature.to_branch_name())

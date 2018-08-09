@@ -63,15 +63,15 @@ def _get_github_url(repo=None):
         return DEFAULT_BASE_URL
 
 
-def request(repo=None):
+def request(repo=None, message=None):
     repo = get_repo(repo)
     try:
-        _create_pull_request(repo)
+        _create_pull_request(repo, message)
     except GithubException as e:
         _handle_github_exception(e, 'create a pull request')
 
 
-def _create_pull_request(repo):
+def _create_pull_request(repo, message=None):
     feature_config = feature.configuration(repo)
     f = feature.current(repo)
     working_remote = feature_config.working_remote
@@ -94,7 +94,10 @@ def _create_pull_request(repo):
             return
 
     default_title = repo.head.commit.summary
-    title = ask("Title: ", default_title)
+    if message:
+        title = message
+    else:
+        title = ask("Title: ", default_title)
     body = ""
     if title is default_title:
         body = repo.head.commit.message

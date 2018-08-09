@@ -72,13 +72,13 @@ def _fetch(repo, remote):
         print 'WARNING: Unable to fetch changes.'
 
 
-def _publish():
+def _publish(message=None):
     repo = get_repo()
     check_repo_is_clean(repo)
     config = configuration(repo)
     _push_working_branch(config, repo)
     if config.publish_with_pull_request:
-        git_hub.request(repo)
+        git_hub.request(repo, message)
 
 
 def _push_working_branch(config, repo):

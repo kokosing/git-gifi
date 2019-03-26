@@ -94,7 +94,11 @@ def _create_pull_request(repo, message=None):
             return
 
     epic = '/'.join(current_branch.split('/')[1:-1])
-    default_title = "(%s) %s" %(epic, repo.head.commit.summary)
+    if epic == 'master':
+        epic = ''
+    else:
+        epic = "(%s)" % epic
+    default_title = "%s %s" %(epic, repo.head.commit.summary)
     if message:
         title = message
     else:

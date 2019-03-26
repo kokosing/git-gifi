@@ -93,7 +93,8 @@ def _create_pull_request(repo, message=None):
             print "Pull request is already created, see: %s" % html_url
             return
 
-    default_title = repo.head.commit.summary
+    epic = '/'.join(current_branch.split('/')[1:-1])
+    default_title = "(%s) %s" %(epic, repo.head.commit.summary)
     if message:
         title = message
     else:

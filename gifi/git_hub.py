@@ -97,8 +97,8 @@ def _create_pull_request(repo, message=None):
     if epic == 'master':
         epic = ''
     else:
-        epic = "(%s)" % epic
-    default_title = "%s %s" %(epic, repo.head.commit.summary)
+        epic = "(%s) " % epic
+    default_title = "%s%s" %(epic, repo.head.commit.summary)
     if message:
         title = message
     else:

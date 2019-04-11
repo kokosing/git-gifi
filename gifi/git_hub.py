@@ -98,7 +98,7 @@ def _create_pull_request(repo, message=None):
         epic = ''
     else:
         epic = "(%s) " % epic
-    default_title = "%s%s" %(epic, repo.head.commit.summary)
+    default_title = repo.head.commit.summary
     if message:
         title = message
     else:
@@ -107,7 +107,7 @@ def _create_pull_request(repo, message=None):
     if title is default_title:
         body = repo.head.commit.message
     pull_request_parameters = {
-        'title': title,
+        'title': ("%s%s" % (epick, title))
         'body': body,
         'head': head,
         'base': f.target_branch

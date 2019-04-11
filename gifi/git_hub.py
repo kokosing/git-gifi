@@ -107,7 +107,7 @@ def _create_pull_request(repo, message=None):
     if title is default_title:
         body = repo.head.commit.message
     pull_request_parameters = {
-        'title': ("%s%s" % (epick, title))
+        'title': ("%s%s" % (epick, title)),
         'body': body,
         'head': head,
         'base': f.target_branch

@@ -28,14 +28,14 @@ class ConfigurationTest(AbstractGitReposTest):
     def test_configure(self):
         config = self._bool_config()
 
-        with mock.patch('__builtin__.raw_input', return_value='true'):
+        with mock.patch('__builtin__.input', return_value='true'):
             config.configure()
         assert config.bool_property == True
 
     def test_configure_with_wrong_input(self):
         config = self._bool_config()
 
-        with mock.patch('__builtin__.raw_input', return_value='wrong value'):
+        with mock.patch('__builtin__.input', return_value='wrong value'):
             expected_msg = ".*Wrong value.*"
             with self.assertRaisesRegexp(CommandException, expected_msg):
                 config.configure()
@@ -50,11 +50,11 @@ class ConfigurationTest(AbstractGitReposTest):
 
     def test_configure_with_no_input(self):
         config = self._create_test_config()
-        with mock.patch('__builtin__.raw_input', return_value=''):
+        with mock.patch('__builtin__.input', return_value=''):
             config.configure()
 
         assert config.sample == 'sample_default_value'
 
     def test_command(self):
-        with mock.patch('__builtin__.raw_input', return_value=''):
+        with mock.patch('__builtin__.input', return_value=''):
             configuration_command(self._create_test_config, "description")()

@@ -34,7 +34,7 @@ def _pop_finish(repo=None):
 def _push():
     repo = get_repo()
     check_repo_is_clean(repo)
-    (target_remote, target_branch) = epic.current()
+    (target_remote, target_branch) = gifi.epic.current()
     base = '%s/%s' % (target_remote, target_branch)
     if repo.head.commit == repo.commit(base):
         raise CommandException('You are currently at %s, there is nothing to push' % base)

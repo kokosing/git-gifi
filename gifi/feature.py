@@ -95,7 +95,7 @@ def _push_working_branch(config, repo):
 
 def ask(question):
     while True:
-        answer = raw_input('%s [yes|no]: ' % question).strip().lower()
+        answer = input('%s [yes|no]: ' % question).strip().lower()
         if answer == 'yes':
             return True
         elif answer == 'no':

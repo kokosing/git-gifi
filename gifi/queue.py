@@ -1,7 +1,7 @@
-from command import Command, AggregatedCommand, CommandException
-from utils.git_utils import get_repo, check_repo_is_clean
+from gifi.command import Command, AggregatedCommand, CommandException
+from gifi.utils.git_utils import get_repo, check_repo_is_clean
 from git import GitCommandError
-import epic
+import gifi.epic
 
 
 def _pop():

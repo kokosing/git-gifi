@@ -1,8 +1,8 @@
-import feature
-from command import AggregatedCommand, Command, CommandException
-from utils.configuration import Configuration
-from utils.git_utils import get_repo
-from utils.ui import ask
+import gifi.feature
+from gifi.command import AggregatedCommand, Command, CommandException
+from gifi.utils.configuration import Configuration
+from gifi.utils.git_utils import get_repo
+from gifi.utils.ui import ask
 
 
 class Epic:
@@ -26,11 +26,11 @@ def _print_list(repo=None, config=None):
     if config is None:
         config = configuration(repo)
 
-    print 'List of epics:'
+    print('List of epics:')
     i = 0
     for epic in _list_all(config):
         i = i + 1
-        print '%d - %s' % (i, epic)
+        print(i, " - ", epic)
 
 
 def _list_all(config):
@@ -69,13 +69,13 @@ def _rm():
 
 
 def _print_current():
-    print '/'.join(current())
+    print('/'.join(current()))
 
 
 def current():
     repo = get_repo()
-    if feature.is_on_feature_branch(repo):
-        f = feature.current(repo)
+    if gifi.feature.is_on_feature_branch(repo):
+        f = gifi.feature.current(repo)
         return (f.target_remote, f.target_branch)
     else:
         return ('origin', 'master')

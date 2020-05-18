@@ -23,8 +23,7 @@ class NoseTestCommand(TestCommand):
 
 requirements = [
     'PyGithub==1.25.2',
-    'GitPython==2.1.7',
-    'slackclient==0.15'
+    'GitPython==3.1.2',
 ]
 
 test_requirements = [
@@ -43,7 +42,7 @@ setup(
     description='Git and github enhancements to git.',
     author='Grzegorz Kokosinski',
     author_email='g.kokosinski@gmail.com',
-    keywords='git github pull request slack',
+    keywords='git github pull request',
     url='https://github.com/kokosing/git-gifi',
     packages=find_packages(exclude=['*tests*']),
     package_dir={'gifi': 'gifi'},

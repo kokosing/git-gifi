@@ -3,11 +3,11 @@ import logging
 from github import Github, GithubException
 from github.MainClass import DEFAULT_BASE_URL
 
-import feature
-from command import AggregatedCommand, Command, CommandException
+import gifi.feature
+from gifi.command import AggregatedCommand, Command, CommandException
 from gifi.utils.ui import ask
-from utils.configuration import Configuration, NOT_SET, configuration_command, REPOSITORY_CONFIG_LEVEL
-from utils.git_utils import get_repo, get_remote_url, get_current_branch
+from gifi.utils.configuration import Configuration, NOT_SET, configuration_command, REPOSITORY_CONFIG_LEVEL
+from gifi.utils.git_utils import get_repo, get_remote_url, get_current_branch
 
 PULL_REQUEST_COMMIT_TAG = 'Pull request'
 
@@ -56,7 +56,7 @@ def _get_github(repo):
 
 
 def _get_github_url(repo=None):
-    target_remote_url = get_remote_url(feature.current(repo).target_remote, repo)
+    target_remote_url = get_remote_url(gifi.feature.current(repo).target_remote, repo)
     if 'github.com' not in target_remote_url:
         return 'https://%s/api/v3' % target_remote_url.split('@')[1].split(':')[0]
     else:
@@ -72,8 +72,8 @@ def request(repo=None, message=None):
 
 
 def _create_pull_request(repo, message=None):
-    feature_config = feature.configuration(repo)
-    f = feature.current(repo)
+    feature_config = gifi.feature.configuration(repo)
+    f = gifi.feature.current(repo)
     working_remote = feature_config.working_remote
     full_repo_name = get_remote_url(f.target_remote, repo).split(':')[1].split('.')[0]
     working_namespace = get_remote_url(working_remote, repo).split(':')[1].split('/')[0]
@@ -90,7 +90,7 @@ def _create_pull_request(repo, message=None):
     for pull_request in pull_requests:
         html_url = pull_request.html_url
         if head == pull_request.head.label:
-            print "Pull request is already created, see: %s" % html_url
+            print("Pull request is already created, see: ", html_url)
             return
 
     epic = '/'.join(current_branch.split('/')[1:-1])
@@ -115,7 +115,7 @@ def _create_pull_request(repo, message=None):
 
     logging.debug('Creating pull request with: %s' % pull_request_parameters)
     pull_request = github.create_pull(**pull_request_parameters)
-    print 'Pull request URL: %s' % pull_request.html_url
+    print('Pull request URL: ', pull_request.html_url)
 
 
 def _missing_configuration_exception(item):

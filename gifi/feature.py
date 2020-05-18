@@ -3,14 +3,13 @@ import subprocess
 import re
 from git import GitCommandError
 
-import epic
-import git_hub
-import slack
-from command import AggregatedCommand, Command, CommandException
-from git_hub import PULL_REQUEST_COMMIT_TAG
-from utils import git_utils
-from utils.configuration import Configuration, configuration_command
-from utils.git_utils import get_repo, check_repo_is_clean, get_from_last_commit_message
+import gifi.epic
+import gifi.git_hub
+from gifi.command import AggregatedCommand, Command, CommandException
+from gifi.git_hub import PULL_REQUEST_COMMIT_TAG
+from gifi.utils import git_utils
+from gifi.utils.configuration import Configuration, configuration_command
+from gifi.utils.git_utils import get_repo, check_repo_is_clean, get_from_last_commit_message
 
 
 class Feature:
@@ -35,15 +34,15 @@ def _start(feature=None, e=None):
     repo = get_repo()
 
     if e is None:
-        e = epic.select()
+        e = gifi.epic.select()
     else:
-        e = epic.Epic.parse(e)
+        e = gifi.epic.Epic.parse(e)
 
     numbered_epic_features = map(
         lambda head: head.name.replace(e.to_string() + '/', ''),
         [head for head in repo.heads if re.match(r'%s/[0-9].*' % e.to_string(), head.name)])
     feature_id = 1
-    if numbered_epic_features:
+    if len(list(numbered_epic_features)) > 0:
         feature_id = 1 + max(map(
             lambda epic_feature: int('0' + re.sub('_.*', '', epic_feature)),
             numbered_epic_features))
@@ -54,7 +53,7 @@ def _start(feature=None, e=None):
 
     git_utils.check_repo_is_clean(repo)
 
-    print 'Starting %s' % feature_branch
+    print('Starting ', feature_branch)
 
     _fetch(repo, e.remote)
     repo.create_head(feature_branch, e.to_string())
@@ -67,7 +66,7 @@ def _fetch(repo, remote):
         repo.git.fetch(remote)
     except GitCommandError as e:
         logging.warn('Unable to fetch: %s' % e)
-        print 'WARNING: Unable to fetch changes.'
+        print('WARNING: Unable to fetch changes.')
 
 
 def _publish(message=None):
@@ -113,9 +112,6 @@ def _finish():
     _push_working_branch(config, repo)
     repo.git.push(feature.target_remote, 'HEAD:%s' % feature.target_branch)
     _discard()
-    pull_requests = _get_pull_requests(repo)
-    if len(pull_requests) > 0:
-        slack.notify('%s merged.' % ', '.join(pull_requests))
 
 
 def _rebase(repo=None, config=None):
@@ -132,9 +128,6 @@ def _rebase(repo=None, config=None):
         raise CommandException(message)
 
 
-def _get_pull_requests(repo):
-    return get_from_last_commit_message(repo, PULL_REQUEST_COMMIT_TAG)
-
 
 def _discard():
     repo = get_repo()
@@ -150,7 +143,7 @@ def _discard():
         repo.git.push(config.working_remote, ':%s' % feature.to_branch_name())
     except GitCommandError as e:
         logging.warn('Unable to drop remote feature branch: %s' % e)
-        print 'WARNING: Unable to remove remote feature branch. Maybe it was not yet created?'
+        print('WARNING: Unable to remove remote feature branch. Maybe it was not yet created?')
     repo.git.branch('-D', feature.to_branch_name())
     repo.git.rebase('%s/%s' % (feature.target_remote, feature.target_branch))
     repo.git.fetch('%s' % config.working_remote, '--prune')

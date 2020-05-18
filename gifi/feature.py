@@ -75,7 +75,7 @@ def _publish(message=None):
     config = configuration(repo)
     _push_working_branch(config, repo)
     if config.publish_with_pull_request:
-        git_hub.request(repo, message)
+        gifi.git_hub.request(repo, message)
 
 
 def _push_working_branch(config, repo):

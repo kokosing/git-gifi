@@ -38,11 +38,11 @@ def _start(feature=None, e=None):
     else:
         e = gifi.epic.Epic.parse(e)
 
-    numbered_epic_features = map(
+    numbered_epic_features = list(map(
         lambda head: head.name.replace(e.to_string() + '/', ''),
-        [head for head in repo.heads if re.match(r'%s/[0-9].*' % e.to_string(), head.name)])
+        [head for head in repo.heads if re.match(r'%s/[0-9].*' % e.to_string(), head.name)]))
     feature_id = 1
-    if len(list(numbered_epic_features)) > 0:
+    if len(numbered_epic_features) > 0:
         feature_id = 1 + max(map(
             lambda epic_feature: int('0' + re.sub('_.*', '', epic_feature)),
             numbered_epic_features))

@@ -3,7 +3,7 @@ from gifi.command import CommandException
 
 def ask(question, value):
     raw_value = input("%s (%s): " % (question, value))
-    if raw_value is not '':
+    if raw_value != '':
         value = parse_value(raw_value, type(value))
     return value
 

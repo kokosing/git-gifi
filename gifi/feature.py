@@ -123,7 +123,7 @@ def _rebase(repo=None, config=None):
     interactive = '-i' if config.finish_with_rebase_interactive else ''
     rebase_cmd = 'git rebase %s/%s %s' % (feature.target_remote, feature.target_branch, interactive)
     rebase_status = subprocess.call(rebase_cmd, shell=True)
-    if rebase_status is not 0:
+    if rebase_status != 0:
         message = 'Rebase finished with an error, please fix it manually and then use "git rebase --continue"'
         raise CommandException(message)
 

@@ -94,7 +94,7 @@ def _create_pull_request(repo, message=None):
             return
 
     epic = '/'.join(current_branch.split('/')[1:-1])
-    if epic == 'master':
+    if epic == 'master' or epic == 'main':
         epic = ''
     else:
         epic = "(%s) " % epic

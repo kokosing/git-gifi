@@ -88,7 +88,7 @@ def _push_working_branch(config, repo):
         message = 'Unable to push your changes ("git push -u %s %s"). Would you like to use force?'
         question = message % tuple(push_params)
         if ask(question):
-            repo.git.push('-f', '-u', *push_params)
+            repo.git.push('--force-with-lease', '-u', *push_params)
         else:
             raise CommandException('Manual pull and rebase is required')
 

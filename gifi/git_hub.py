@@ -1,7 +1,6 @@
 import getpass
 import logging
 from github import Github, GithubException
-from github.MainClass import DEFAULT_BASE_URL
 
 import gifi.feature
 from gifi.command import AggregatedCommand, Command, CommandException
@@ -60,7 +59,7 @@ def _get_github_url(repo=None):
     if 'github.com' not in target_remote_url:
         return 'https://%s/api/v3' % target_remote_url.split('@')[1].split(':')[0]
     else:
-        return DEFAULT_BASE_URL
+        return 'https://api.github.com'
 
 
 def request(repo=None, message=None):

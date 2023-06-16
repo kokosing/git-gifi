@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "git-gifi"
+version = "1"
+description = "git enhacments to work with GitHub"
+authors = ["Grzegorz Kokosiński <g.kokosinski@gmail.com>"]
+license = "Apache 2.0"
+readme = "README.rst"
+packages = [{include = "gifi"}]
+homepage = "https://github.com/kokosing/git-gifi"
+repository = "https://github.com/kokosing/git-gifi"
+keywords = ["git", "github"]
+include = [
+    "LICENSE",
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+PyGithub = "1.58.2"
+GitPython = "3.1.2"
+
+[[tool.poetry.source]]
+name = "PyPI"
+priority = "primary"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+gifi = "gifi.main:main"

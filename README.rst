@@ -10,8 +10,8 @@ Git and github enhancements to git.
 Requirmentes:
 -------------
 
--  git (tested with version 1.9.1)
--  python 2.7
+-  git (tested with version 2.30.x)
+-  python 3.11
 
 Installation
 ------------

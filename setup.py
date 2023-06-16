@@ -23,7 +23,7 @@ class NoseTestCommand(TestCommand):
 
 requirements = [
     'PyGithub==1.25.2',
-    'GitPython==3.1.2',
+    'GitPython==3.1.30',
 ]
 
 test_requirements = [

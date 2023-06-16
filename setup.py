@@ -38,7 +38,7 @@ setup_requirements = [
 
 setup(
     name='git-gifi',
-    version='0.13-SNAPSHOT',
+    version='0.',
     description='Git and github enhancements to git.',
     author='Grzegorz Kokosinski',
     author_email='g.kokosinski@gmail.com',

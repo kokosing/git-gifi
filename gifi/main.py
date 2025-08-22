@@ -5,7 +5,6 @@ from gifi.utils import git_utils
 from gifi.command import Command, AggregatedCommand, UnknownCommandException, CommandException
 import gifi.epic
 import gifi.feature
-import pkg_resources
 import gifi.queue
 import gifi.git_hub
 
@@ -15,8 +14,7 @@ command = AggregatedCommand('gifi', 'Git and github enhancements to git.', [
     gifi.epic.command,
     gifi.feature.command,
     gifi.queue.command,
-    gifi.git_hub.command,
-    Command('version', 'Show version number.', lambda: pkg_resources.require("git-gifi")[0].version)
+    gifi.git_hub.command
 ])
 
 
